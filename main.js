@@ -81,12 +81,12 @@ function createPricePerHoodChart(){
         .data(dataByHood)
         .enter()
         .append("text")
-        .attr("x", function(d) { return  x_scale(d["value"]) - 55; })
-        .attr("y", function(d, i) { return 35 * i + 20 })
         .text( function (d) { return "$" + Math.fround(d["value"]).toFixed(2) })
         .attr("font-family", "sans-serif")
         .attr("font-size", "14px")
         .attr("fill", "black")
+        .attr("x", function(d) { return x_scale(d["value"]) - this.clientWidth - 5; })
+        .attr("y", function(d, i) { return 35 * i + 20 })
 }
 
 
