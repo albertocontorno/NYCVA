@@ -10,7 +10,7 @@ margin = {
 
 var barChartSvg = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-d3.csv("./AB_NYC_2019.csv").then(function(data){
+d3.csv("./NYC_AirBnB_announcements.csv").then(function(data){
     let mean = d3.mean(data, (el) => el["price"]);
     data = data.sort( (a,b)=> a["price"] - b["price"]);
     console.log(data[0]);
