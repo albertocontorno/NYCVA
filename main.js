@@ -6,11 +6,9 @@ margin = {
     bottom: 30,
     left: 80
 }
-width = +document.querySelector("svg").clientWidth - margin.left - margin.right
-console.log(width )
-height = +document.querySelector("svg").clientHeight - margin.top - margin.bottom
-g = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
+
+var barChartSvg = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
 d3.csv("./AB_NYC_2019.csv").then(function(data){
     let mean = d3.mean(data, (el) => el["price"])
@@ -22,15 +20,16 @@ d3.csv("./AB_NYC_2019.csv").then(function(data){
         .rollup(function(v) { return d3.mean(v, (el) => el["price"]) })
         .entries(data);
 
-    createPricePerHoodChart()
+    createPricePerHoodChart(barChartSvg)
 })
 
 
-function createPricePerHoodChart(){
+function createPricePerHoodChart(el){
+    let g = el
     width = +document.querySelector("svg").clientWidth - margin.left - margin.right
-    console.log(width )
     height = +document.querySelector("svg").clientHeight - margin.top - margin.bottom
 
+    
     dataByHood.sort( (a,b)=> b["value"] - a["value"])
     // Create scale
     const x_scale = d3.scaleLinear()
@@ -47,50 +46,16 @@ function createPricePerHoodChart(){
         .padding(0.1);
 
     var y_axis = d3.axisLeft(y_scale)
-    
-    g.text("") //clear
 
-    g.append("g")
-        .attr("transform", "translate(0," + height + ")")
-        .call(x_axis)
-
-    g.append("g")
-        .call(y_axis)
-    
-    g.selectAll(".bar")
-        .data(dataByHood)
-        .enter()
-        .append("rect")
-        .attr("fill", "steelblue")
-        .attr("x", function (d, i) {
-            return 1;
-        })
-        .attr("y", function (d, i) {
-            return 35 * i;
-        })
-        .attr("width", function(d) { return x_scale(d["value"]) })
-        .attr("height", function(d) { return 30; })
-        .on("mouseover", function(d, i){ 
-            d3.select(this).attr("fill", "orange")
-        })
-        .on("mouseleave", function(d, i){ 
-            d3.select(this).attr("fill", "steelblue")
-        })
-
-    g.selectAll(".text")
-        .data(dataByHood)
-        .enter()
-        .append("text")
-        .text( function (d) { return "$" + Math.fround(d["value"]).toFixed(2) })
-        .attr("font-family", "sans-serif")
-        .attr("font-size", "14px")
-        .attr("fill", "black")
-        .attr("x", function(d) { return x_scale(d["value"]) - this.clientWidth - 5; })
-        .attr("y", function(d, i) { return 35 * i + 20 })
+    let barChart = new Barchart(dataByHood, width, height, x_axis, y_axis, x_scale, y_scale);
+    barChart.dataValueAccessorFn = d => d["value"]
+    barChart.dataLabelAccessorFn = d => d["value"]
+    barChart.labelFn = d => "$" + Math.fround( d["value"]).toFixed(2) 
+    barChart.draw(g);
 }
 
 
-window.onresize = createPricePerHoodChart
+window.onresize = createPricePerHoodChart.bind(null, barChartSvg)
 
 
 
