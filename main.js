@@ -7,7 +7,7 @@ const scatterPlotSvg = d3.select("#location_scatter_plot").append("g").attr("tra
 d3.csv("./NYC_AirBnB_announcements.csv").then(function(data){
 
     plotPricePerHoodChart(data);
-    plotLocationScatterPlot(data);
+    //plotLocationScatterPlot(data);
 
 });
 
