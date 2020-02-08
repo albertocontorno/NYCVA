@@ -70,7 +70,7 @@ class Barchart{
             .attr("font-family", "sans-serif")
             .attr("font-size", self.fontSize)
             .attr("fill", self.fontColor)
-            .attr("x", function(d) { return self.x_scale(d["value"]) - this.clientWidth - 5; })
+            .attr("x", function(d) { return self.x_scale(d["value"]) - this.textLength.baseVal.value - 5; })
             .attr("y", function(d, i) { return self.yOffset * i + 20 });
     }
 }
