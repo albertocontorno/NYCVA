@@ -1,21 +1,21 @@
-var dataByHood = []
+var dataByHood = [];
 var svg = d3.select("svg"),
 margin = {
     top: 20,
     right: 20,
     bottom: 30,
     left: 80
-}
-width = +document.querySelector("svg").clientWidth - margin.left - margin.right
-console.log(width )
-height = +document.querySelector("svg").clientHeight - margin.top - margin.bottom
+};
+width = +document.querySelector("svg").clientWidth - margin.left - margin.right;
+console.log(width );
+height = +document.querySelector("svg").clientHeight - margin.top - margin.bottom;
 g = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
 
 d3.csv("./AB_NYC_2019.csv").then(function(data){
-    let mean = d3.mean(data, (el) => el["price"])
-    data = data.sort( (a,b)=> a["price"] - b["price"])
-    console.log(data[0])
+    let mean = d3.mean(data, (el) => el["price"]);
+    data = data.sort( (a,b)=> a["price"] - b["price"]);
+    console.log(data[0]);
 
     dataByHood = d3.nest()
         .key(function(d) { return d["neighbourhood_group"]; })
@@ -23,15 +23,15 @@ d3.csv("./AB_NYC_2019.csv").then(function(data){
         .entries(data);
 
     createPricePerHoodChart()
-})
+});
 
 
 function createPricePerHoodChart(){
-    width = +document.querySelector("svg").clientWidth - margin.left - margin.right
-    console.log(width )
-    height = +document.querySelector("svg").clientHeight - margin.top - margin.bottom
+    width = +document.querySelector("svg").clientWidth - margin.left - margin.right;
+    console.log(width );
+    height = +document.querySelector("svg").clientHeight - margin.top - margin.bottom;
 
-    dataByHood.sort( (a,b)=> b["value"] - a["value"])
+    dataByHood.sort( (a,b)=> b["value"] - a["value"]);
     // Create scale
     const x_scale = d3.scaleLinear()
                   .domain([0, d3.max(dataByHood, (d)=>d["value"])])
@@ -46,16 +46,16 @@ function createPricePerHoodChart(){
         .rangeRound([0, height])
         .padding(0.1);
 
-    var y_axis = d3.axisLeft(y_scale)
+    var y_axis = d3.axisLeft(y_scale);
     
-    g.text("") //clear
+    g.text(""); //clear
 
     g.append("g")
         .attr("transform", "translate(0," + height + ")")
-        .call(x_axis)
+        .call(x_axis);
 
     g.append("g")
-        .call(y_axis)
+        .call(y_axis);
     
     g.selectAll(".bar")
         .data(dataByHood)
@@ -75,7 +75,7 @@ function createPricePerHoodChart(){
         })
         .on("mouseleave", function(d, i){ 
             d3.select(this).attr("fill", "steelblue")
-        })
+        });
 
     g.selectAll(".text")
         .data(dataByHood)
@@ -90,7 +90,7 @@ function createPricePerHoodChart(){
 }
 
 
-window.onresize = createPricePerHoodChart
+window.onresize = createPricePerHoodChart;
 
 
 
