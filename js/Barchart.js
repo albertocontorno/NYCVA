@@ -71,7 +71,7 @@ class Barchart{
             .attr("text-anchor", "end")
             .attr("font-size", self.fontSize)
             .attr("fill", self.fontColor)
-            .attr("x", function(d) { return self.x_scale(d["value"]) -5; })
-            .attr("y", function(d, i) { return self.y_scale(d["key"]) + self.y_scale.bandwidth() / 2});
+            .attr("x", function(d) { return self.x_scale(d["value"]) - 5; })
+            .attr("y", function(d, i) { console.dir(this); console.log(self.y_scale.bandwidth(), self.y_scale(d["key"]) + (self.y_scale.bandwidth() / 2) + (this.getBoundingClientRect().y/2)); return self.y_scale(d["key"]) + (self.y_scale.bandwidth() / 2) + 5});
     }
 }
