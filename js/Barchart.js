@@ -51,10 +51,10 @@ class Barchart{
                 return self.xOffset;
             })
             .attr("y", function (d, i) {
-                return self.yOffset * i;
+                return self.y_scale(d["key"]);
             })
             .attr("width", function(d) { return self.x_scale(self.dataValueAccessorFn ? self.dataValueAccessorFn(d) : d) })
-            .attr("height", function(d) { return self.barHeight; })
+            .attr("height", function(d) { return self.y_scale.bandwidth() })
             .on("mouseover", function(d, i){ 
                 d3.select(this).attr("fill", self.barColorHover)
             })
@@ -68,9 +68,10 @@ class Barchart{
             .append("text")
             .text( function (d) { return self.labelFn ? self.labelFn(d) : d })
             .attr("font-family", "sans-serif")
+            .attr("text-anchor", "end")
             .attr("font-size", self.fontSize)
             .attr("fill", self.fontColor)
-            .attr("x", function(d) { return self.x_scale(d["value"]) - this.clientWidth - 5; })
-            .attr("y", function(d, i) { return self.yOffset * i + 20 });
+            .attr("x", function(d) { return self.x_scale(d["value"]) -5; })
+            .attr("y", function(d, i) { return self.y_scale(d["key"]) + self.y_scale.bandwidth() / 2});
     }
 }

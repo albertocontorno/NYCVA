@@ -45,9 +45,8 @@ function createPricePerHoodChart(el, dataByHood){
     
     const y_scale = d3.scaleBand()
         .domain(dataByHood.map( el => el["key"]))
-        .range([0, 5])
-        .rangeRound([0, height])
-        .padding(0.1);
+        .rangeRound([0, height]).paddingOuter(0.1).paddingInner(0.2)
+
 
     const y_axis = d3.axisLeft(y_scale);
 
