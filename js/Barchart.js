@@ -1,7 +1,7 @@
 class Barchart{
 
     barClass = '.bar';
-    labelClass = '.bar_label'
+    labelClass = '.bar_label';
     x_scale = null;
     y_scale = null;
     x_axis = null;
@@ -21,7 +21,7 @@ class Barchart{
     labelFn = null;
 
     constructor(data, w, h, x_axis, y_axis, x_scale, y_scale ){
-        this.data = data
+        this.data = data;
         this.width = w;
         this.height = h;
         this.x_axis = x_axis;
@@ -31,7 +31,7 @@ class Barchart{
     }
 
     draw(g){
-        const self = this //because we need to use the normal function defition for D3 where this is not the class, but the D3 object
+        const self = this; //because we need to use the normal function definition for D3 where this is not the class, but the D3 object
 
         g.text(""); //clear
 
@@ -46,7 +46,7 @@ class Barchart{
             .data(self.data)
             .enter()
             .append("rect")
-            .attr("fill", "steelblue")
+            .attr("fill", self.barColor)
             .attr("x", function (d, i) {
                 return self.xOffset;
             })
@@ -56,10 +56,10 @@ class Barchart{
             .attr("width", function(d) { return self.x_scale(self.dataValueAccessorFn ? self.dataValueAccessorFn(d) : d) })
             .attr("height", function(d) { return self.barHeight; })
             .on("mouseover", function(d, i){ 
-                d3.select(this).attr("fill", self.barColor)
+                d3.select(this).attr("fill", self.barColorHover)
             })
             .on("mouseleave", function(d, i){ 
-                d3.select(this).attr("fill", self.barColorHover)
+                d3.select(this).attr("fill", self.barColor)
             });
     
         g.selectAll(self.labelClass)
