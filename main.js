@@ -107,13 +107,32 @@ function plotLocationScatterPlot(data) {
 
 
 function plotMapWithScatter(data){
+    function zoomed() {
+        t = d3
+           .event
+           .transform
+        ;
+        countriesGroup.attr(
+           "transform","translate(" + [t.x, t.y] + ")scale(" + t.k + ")"
+        );
+     }
+
+    var zoom = d3
+    .zoom()
+    .on("zoom", zoomed)
+
     const svg = d3.select("#scatter_map").attr("preserveAspectRatio", "xMinYMin meet")
         .style("background","#c9e8fd")
-        .classed("svg-content", true);
+        .classed("svg-content", true).call(zoom);
+
+    const countriesGroup = svg
+    .append("g")
+    .attr("id", "map")
+
     const w = +document.querySelector("#scatter_map").clientWidth
     const h = +document.querySelector("#scatter_map").clientHeight
     //translate([this.getWidth() / 2, this.getHeight() / (2 * this.options.scaleHeight)]).scale(this.getWidth() / 640 * 100).rotate([-12, 0]).precision(0.1)
-    const projection = d3.geoEquirectangular()//.translate([w / 2, h / (2 * 1)]).scale(6000).rotate([-12, 0]).precision(0.1)
+    const projection = d3.geoAlbersUsa()
     //translate([w/2, h/2]).scale(2000).center([-40, 40]);
     //translate([w / 2, h / (2 * 1)]).scale(w / 640 * 100).rotate([-12, 0]).precision(0.1)
     //translate([w/2, h/2]).scale(1000).center([-500,0]);
@@ -124,29 +143,29 @@ function plotMapWithScatter(data){
 
     Promise.all([worldmap]).then(function(values){   
         console.log(values) 
-        projection.fitExtent([[20, 20], [w, h]], values[0]);
+        projection.fitExtent([[20, 20], [w, h]], values[0])
         
     // draw map
-        svg.selectAll("path")
-            .data(values[0].features)
-            .enter()
-            .append("path")
-            .attr("fill","lightgray")
-            .attr("d", path)
-            .on('mouseover', function(d, i){
-                console.log("asdsadsadsa", d3.select(this))
-                d3.select(this).attr("stroke", 'blue')
-            })
-            .on('mouseleave', function(d, i){
-                console.log("asdsadsadsa", d3.select(this))
-                d3.select(this).attr("stroke", null)
-            });
+    countriesGroup.selectAll("path")
+        .data(values[0].features)
+        .enter()
+        .append("path")
+        .attr("fill","lightgray")
+        .attr("d", path)
+        .on('mouseover', function(d, i){
+            console.log("asdsadsadsa", d3.select(this))
+            d3.select(this).attr("stroke", 'blue')
+        })
+        .on('mouseleave', function(d, i){
+            console.log(d, d3.select(this))
+            d3.select(this).attr("stroke", null)
+        });
     // draw points
     var color_scale = d3.scaleLinear()
             .domain([d3.min(data, function(d){return +d.price}),  d3.max(data, function(d){return +d.price})])
             .range([0, 1]);
     var accent = d3.scaleOrdinal(d3.schemeAccent);
-    svg.selectAll("circle")
+    countriesGroup.selectAll("circle")
     .data(data)
     .enter()
     .append("circle")
@@ -166,4 +185,6 @@ function plotMapWithScatter(data){
             .attr("y", function(d) {return projection([d.longitude, d.latitude])[1] + 15;})
             .attr("class","labels"); */
     });
+
+    
 }
