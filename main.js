@@ -8,6 +8,7 @@ d3.csv("./NYC_AirBnB_announcements.csv").then(function(data){
 
     plotPricePerHoodChart(data);
     //plotLocationScatterPlot(data);
+    plotMapWithScatter(data)
 
 });
 
@@ -102,4 +103,67 @@ function plotLocationScatterPlot(data) {
         .attr("r", 1.0)
         .style("fill", "#69b3a2");
 
+}
+
+
+function plotMapWithScatter(data){
+    const svg = d3.select("#scatter_map").attr("preserveAspectRatio", "xMinYMin meet")
+        .style("background","#c9e8fd")
+        .classed("svg-content", true);
+    const w = +document.querySelector("#scatter_map").clientWidth
+    const h = +document.querySelector("#scatter_map").clientHeight
+    //translate([this.getWidth() / 2, this.getHeight() / (2 * this.options.scaleHeight)]).scale(this.getWidth() / 640 * 100).rotate([-12, 0]).precision(0.1)
+    const projection = d3.geoEquirectangular()//.translate([w / 2, h / (2 * 1)]).scale(6000).rotate([-12, 0]).precision(0.1)
+    //translate([w/2, h/2]).scale(2000).center([-40, 40]);
+    //translate([w / 2, h / (2 * 1)]).scale(w / 640 * 100).rotate([-12, 0]).precision(0.1)
+    //translate([w/2, h/2]).scale(1000).center([-500,0]);
+    var path = d3.geoPath().projection(projection);
+
+    var worldmap = d3.json("./assets/new-york-city-boroughs.geojson");
+    //d3.zoom().scaleExtent(this.options.scaleZoom).on('zoom', this.rescale.bind(this));
+
+    Promise.all([worldmap]).then(function(values){   
+        console.log(values) 
+        projection.fitExtent([[20, 20], [w, h]], values[0]);
+        
+    // draw map
+        svg.selectAll("path")
+            .data(values[0].features)
+            .enter()
+            .append("path")
+            .attr("fill","lightgray")
+            .attr("d", path)
+            .on('mouseover', function(d, i){
+                console.log("asdsadsadsa", d3.select(this))
+                d3.select(this).attr("stroke", 'blue')
+            })
+            .on('mouseleave', function(d, i){
+                console.log("asdsadsadsa", d3.select(this))
+                d3.select(this).attr("stroke", null)
+            });
+    // draw points
+    var color_scale = d3.scaleLinear()
+            .domain([d3.min(data, function(d){return +d.price}),  d3.max(data, function(d){return +d.price})])
+            .range([0, 1]);
+    var accent = d3.scaleOrdinal(d3.schemeAccent);
+    svg.selectAll("circle")
+    .data(data)
+    .enter()
+    .append("circle")
+    .attr("fill", function(d){ return accent(color_scale(+d.price))})
+    .attr("cx", function(d) {return projection([d.longitude, d.latitude])[0];})
+    .attr("cy", function(d) {return projection([d.longitude, d.latitude])[1];})
+    .attr("r", "1px")
+    //add labels
+        /*svg.selectAll("text")
+            .data(values[1])
+            .enter()
+            .append("text")
+            .text(function(d) {
+                return d.id;
+                })
+            .attr("x", function(d) {return projection([d.longitude, d.latitude])[0] + 5;})
+            .attr("y", function(d) {return projection([d.longitude, d.latitude])[1] + 15;})
+            .attr("class","labels"); */
+    });
 }
