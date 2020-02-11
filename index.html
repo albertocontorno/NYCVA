@@ -13,6 +13,13 @@
                 text-align: center;
                 font-weight: bold
             }
+
+            rect.selection {
+                stroke          : gray;
+                stroke-dasharray: 4px;
+                stroke-opacity  : 0.5;
+                fill            : transparent;
+            }
         </style>
     </head>
 
@@ -32,8 +39,9 @@
         </div>
         <div class="row">
             <div class="col-md">
-                    <svg id="scatter_map" width="100%" height="800"></svg>
+                <svg id="scatter_map" width="100%" height="800"></svg>
                 <div class="chart_label">Scatter plot of houses using latitude and longitude</div>
+                <button onclick="changePanAndZoom(this)">Disable Zoom</button>
             </div>
         </div>
         <div class="row"></div>

@@ -107,27 +107,16 @@ function plotLocationScatterPlot(data) {
 
 
 function plotMapWithScatter(data){
-    function zoomed() {
-        t = d3
-           .event
-           .transform
-        ;
-        countriesGroup.attr(
-           "transform","translate(" + [t.x, t.y] + ")scale(" + t.k + ")"
-        );
-     }
-
-    var zoom = d3
-    .zoom()
-    .on("zoom", zoomed)
 
     const svg = d3.select("#scatter_map").attr("preserveAspectRatio", "xMinYMin meet")
         .style("background","#c9e8fd")
-        .classed("svg-content", true).call(zoom);
+        .classed("svg-content", true)
 
-    const countriesGroup = svg
-    .append("g")
-    .attr("id", "map")
+    const countriesGroup = svg.append("g").attr("id", "map")
+    svg.call(dragBehavior);
+    selectionRect.svg = countriesGroup;
+    selectionRect.parent = countriesGroup;
+    setPanAndZoom(svg, countriesGroup);
 
     const w = +document.querySelector("#scatter_map").clientWidth
     const h = +document.querySelector("#scatter_map").clientHeight
@@ -165,6 +154,8 @@ function plotMapWithScatter(data){
             .domain([d3.min(data, function(d){return +d.price}),  d3.max(data, function(d){return +d.price})])
             .range([0, 1]);
     var accent = d3.scaleOrdinal(d3.schemeAccent);
+    selectionRect.scale = color_scale;
+    selectionRect.accent = accent;
     countriesGroup.selectAll("circle")
     .data(data)
     .enter()
@@ -188,3 +179,167 @@ function plotMapWithScatter(data){
 
     
 }
+
+function zoomed(svgTarget) {
+    t = d3
+       .event
+       .transform;
+
+    svgTarget.attr(
+       "transform","translate(" + [t.x, t.y] + ")scale(" + t.k + ")"
+    );
+ }
+
+var panAndZoom = true;
+function setPanAndZoom(svgEl, svgElTarget){
+    if(panAndZoom){
+        var zoom = d3
+            .zoom()
+            .on("zoom", zoomed.bind(null, svgElTarget));
+        svgEl.call(zoom);
+        console.log("zoom enabled")
+    } else {
+        svgEl.on(".zoom", null);
+        console.log("zoom disabled")
+    }
+    
+    //d3.select("#scatter_map")
+}
+
+function changePanAndZoom(btnEl){
+    panAndZoom = !panAndZoom;
+    btnEl.innerText = (panAndZoom ? 'Disable' : 'Enable') + ' Zoom';
+    console.log(d3.select("#scatter_map"))
+    setPanAndZoom(d3.select("#scatter_map"), d3.select("#map"))
+}
+
+var selectionRect = {
+	element			: null,
+	previousElement : null,
+	currentY		: 0,
+	currentX		: 0,
+	originX			: 0,
+    originY			: 0,
+    svg             : null,
+    parent          : null,
+    scale           : null,
+    accent          : null,
+	setElement: function(ele) {
+		this.previousElement = this.element;
+		this.element = ele;
+	},
+	getNewAttributes: function() {
+		var x = this.currentX<this.originX?this.currentX:this.originX;
+		var y = this.currentY<this.originY?this.currentY:this.originY;
+		var width = Math.abs(this.currentX - this.originX);
+		var height = Math.abs(this.currentY - this.originY);
+		return {
+	        x       : x,
+	        y       : y,
+	        width  	: width,
+	        height  : height
+		};
+	},
+	getCurrentAttributes: function() {
+		// use plus sign to convert string into number
+		var x = +this.element.attr("x");
+		var y = +this.element.attr("y");
+		var width = +this.element.attr("width");
+		var height = +this.element.attr("height");
+		return {
+			x1  : x,
+	        y1	: y,
+	        x2  : x + width,
+            y2  : y + height,
+            accent: this.accent,
+            scale: this.scale
+		};
+	},
+	getCurrentAttributesAsText: function() {
+		var attrs = this.getCurrentAttributes();
+		return "x1: " + attrs.x1 + " x2: " + attrs.x2 + " y1: " + attrs.y1 + " y2: " + attrs.y2;
+	},
+	init: function(newX, newY) {
+        var rectElement = this.svg.append("rect");
+        rectElement.attr('rx', 4)
+        rectElement.attr('ry', 4)
+        rectElement.attr('x', 0)
+        rectElement.attr('y', 0)
+        rectElement.attr('width', 0)
+        rectElement.attr('height', 0)
+        rectElement.classed("selection", true);
+	    this.setElement(rectElement);
+		this.originX = newX;
+		this.originY = newY;
+		this.update(newX, newY);
+	},
+	update: function(newX, newY) {
+		this.currentX = newX;
+        this.currentY = newY;
+        const newAttr = this.getNewAttributes()
+        this.element.attr('x', newAttr.x)
+        this.element.attr('y', newAttr.y)
+        this.element.attr('width', newAttr.width)
+        this.element.attr('height', newAttr.height)
+	},
+	focus: function() {
+        this.element
+            .style("stroke", "#DE695B")
+            .style("stroke-width", "2.5");
+    },
+    remove: function() {
+    	this.element.remove();
+    	this.element = null;
+    },
+    removePrevious: function() {
+    	if(this.previousElement) {
+    		this.previousElement.remove();
+    	}
+    }
+};
+
+function dragStart() {
+	console.log("dragStart");
+    var p = d3.mouse(this);
+    selectionRect.init(p[0], p[1]);
+	selectionRect.removePrevious();
+}
+
+function dragMove() {
+	console.log("dragMove");
+	var p = d3.mouse(this);
+    selectionRect.update(p[0], p[1]);
+}
+
+function dragEnd() {
+	console.log("dragEnd");
+	var finalAttributes = selectionRect.getCurrentAttributes();
+	console.dir(finalAttributes);
+	if(finalAttributes.x2 - finalAttributes.x1 > 1 && finalAttributes.y2 - finalAttributes.y1 > 1){
+		console.log("range selected");
+		// range selected
+        d3.event.sourceEvent.preventDefault();
+        selectionRect.parent.selectAll('circle').each(function(d,i) { 
+            const circle = d3.select(this)
+            if(circle.attr('cx') > finalAttributes.x1 && circle.attr('cx') < finalAttributes.x2 && circle.attr('cy') > finalAttributes.y1 && circle.attr('cy') < finalAttributes.y2){
+                circle.attr('fill', 'green')
+            } else {
+                circle.attr('fill', finalAttributes.accent(finalAttributes.scale(+d.price)))
+                //circle.attr('fill', 'transparent')
+            }
+        });
+        
+        selectionRect.remove()
+		//selectionRect.focus();
+	} else {
+		console.log("single point");
+        // single point selected
+        selectionRect.remove();
+        // trigger click event manually
+    }
+}
+
+var dragBehavior = d3.drag()
+    .on("drag", dragMove)
+    .on("start", dragStart)
+    .on("end", dragEnd);
