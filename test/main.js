@@ -14,7 +14,6 @@ d3.csv("./NYC_AirBnB_announcements.csv").then(function(data){
 
 function plotPricePerHoodChart(data) {
     data = data.sort( (a,b)=> a["price"] - b["price"]);
-    console.log(data[0]);
 
     const dataByHood = d3.nest()
         .key(function(d) { return d["neighbourhood_group"]; })
@@ -51,7 +50,7 @@ function createPricePerHoodChart(el, dataByHood, data){
     barChart.dataValueAccessorFn = d => d["value"];
     barChart.dataLabelAccessorFn = d => d["value"];
     barChart.labelFn = d => "$" + Math.fround( d["value"]).toFixed(2);
-    barChart.enableSelectionFn = (data_) => { 
+    barChart.enableSelectionFn = (data_) => {
         var selection = data_.filter( v => v.selected ).map( v => v.key)
         if(selection.length <= 0){
             plotLocationScatterPlot( data, true )
@@ -59,8 +58,8 @@ function createPricePerHoodChart(el, dataByHood, data){
             var newData = data.filter( v => selection.includes(v.neighbourhood_group))
             plotLocationScatterPlot( newData, true )
         }
-        
-        
+
+
     }
     barChart.draw(g);
 }
@@ -98,9 +97,15 @@ function plotLocationScatterPlot(data, update = false) {
         margin: { r: 0, t: 0, b: 0, l: 0 },
     };
 
+
+    var graphDiv = document.getElementById('scatter_map_container');
     if(update){
-        Plotly.react("scatter_map_container", plotData, plotLayout);
+        Plotly.react(graphDiv, plotData, plotLayout);
     } else {
-        Plotly.newPlot("scatter_map_container", plotData, plotLayout);
+        Plotly.newPlot(graphDiv, plotData, plotLayout);
     }
+
+    graphDiv.on('plotly_selected', function(eventData) {
+        console.log(eventData.points);
+    });
 }
