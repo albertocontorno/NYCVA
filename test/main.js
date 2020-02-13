@@ -8,7 +8,7 @@ d3.csv("./NYC_AirBnB_announcements.csv").then(function(data){
     data = data.filter(d => d.price < 500)  //Remove outliers
     plotPricePerHoodChart(data);
     plotLocationScatterPlot(data);
-
+    plotWordCloud(data);
 });
 
 
@@ -103,9 +103,14 @@ function plotLocationScatterPlot(data, update = false) {
         Plotly.react(graphDiv, plotData, plotLayout);
     } else {
         Plotly.newPlot(graphDiv, plotData, plotLayout);
+        graphDiv.on('plotly_selected', function(eventData) {
+            console.log(eventData.points);
+            console.log(data[eventData.points[0].pointIndex], eventData.points[0].pointIndex)
+        });
     }
+}
 
-    graphDiv.on('plotly_selected', function(eventData) {
-        console.log(eventData.points);
-    });
+function plotWordCloud(data){
+    const wordCloud = new WordCloud(data);
+    wordCloud.plotWordCloud();
 }

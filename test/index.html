@@ -6,8 +6,10 @@
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flexboxgrid/6.3.1/flexboxgrid.min.css" type="text/css" >
         <script src="./Barchart.js"></script>
+        <script src="./WordCloud.js"></script>
         <script src="https://d3js.org/d3.v5.min.js"></script>
         <script src="https://cdn.plot.ly/plotly-latest.js"></script>
+        <script src="https://cdn.jsdelivr.net/gh/holtzy/D3-graph-gallery@master/LIB/d3.layout.cloud.js"></script>
         <title>Document</title>
         <style>
             .chart_label{
@@ -23,14 +25,19 @@
                 <svg id="barchart_avgPrizePerZone" width="100%" height="225px"></svg>
                 <div class="chart_label">Mean Price per neighbourhood_group</div>
             </div>
-            <div class="col-xs"></div>
+            <div class="col-xs">
+                
+            </div>
         </div>
         <div class="row">
             <div class="col-md">
                 <div id="scatter_map_container" style="height: 750px"></div>
                 <div class="chart_label">Scatter plot of houses using latitude and longitude</div>
             </div>
-            <div class="col-md"></div>
+            <div class="col-md">
+                <svg id="word_cloud" width="100%" height="750px"></svg>
+                <div class="chart_label">Word Cloud</div>
+            </div>
         </div>
         <div class="row"></div>
 
