@@ -4,11 +4,16 @@ const barChartSvg = d3.select("#barchart_avgPrizePerZone").append("g").attr("tra
 scatterPlot_margin = {top: 10, right: 30, bottom: 30, left: 60};
 const scatterPlotSvg = d3.select("#location_scatter_plot").append("g").attr("transform", "translate(" + scatterPlot_margin.left + "," + scatterPlot_margin.top + ")");
 
-d3.csv("./NYC_AirBnB_announcements.csv").then(function(data){
-    data = data.filter(d => d.price < 500)  //Remove outliers
+d3.csv("./NYC_AirBnB_announcements_short.csv").then(function(data){
+    data = data.filter(d => d.price < 500);  //Remove outliers
     plotPricePerHoodChart(data);
     plotLocationScatterPlot(data);
     plotWordCloud(data);
+});
+
+d3.csv("./NYC_AirBnB_announcements_short_PCA.csv").then(function(data){
+    data = data.filter(d => d.price < 500); //Remove outliers
+    initAndPlotPCA(data);
 });
 
 
@@ -42,7 +47,7 @@ function createPricePerHoodChart(el, dataByHood, data){
     
     const y_scale = d3.scaleBand()
         .domain(dataByHood.map( el => el["key"]))
-        .rangeRound([0, height]).paddingOuter(0.1).paddingInner(0.2)
+        .rangeRound([0, height]).paddingOuter(0.1).paddingInner(0.2);
 
 
     const y_axis = d3.axisLeft(y_scale);
@@ -51,16 +56,16 @@ function createPricePerHoodChart(el, dataByHood, data){
     barChart.dataLabelAccessorFn = d => d["value"];
     barChart.labelFn = d => "$" + Math.fround( d["value"]).toFixed(2);
     barChart.enableSelectionFn = (data_) => {
-        var selection = data_.filter( v => v.selected ).map( v => v.key)
+        var selection = data_.filter( v => v.selected ).map( v => v.key);
         if(selection.length <= 0){
             plotLocationScatterPlot( data, true )
         } else {
-            var newData = data.filter( v => selection.includes(v.neighbourhood_group))
+            var newData = data.filter( v => selection.includes(v.neighbourhood_group));
             plotLocationScatterPlot( newData, true )
         }
 
 
-    }
+    };
     barChart.draw(g);
 }
 
@@ -113,4 +118,12 @@ function plotLocationScatterPlot(data, update = false) {
 function plotWordCloud(data){
     const wordCloud = new WordCloud(data);
     wordCloud.plotWordCloud();
+}
+
+function initAndPlotPCA(data){
+    const pca = new PCAPlotter(data);
+    pca.callback = (updatedData) => {
+        plotLocationScatterPlot(updatedData, true);
+    };
+    pca.initPlotter();
 }
