@@ -23,12 +23,12 @@ function plotPricePerHoodChart(data) {
 
     dataByHood.sort( (a,b)=> b["value"] - a["value"]);
 
-    createPricePerHoodChart(barChartSvg, dataByHood);
+    createPricePerHoodChart(barChartSvg, dataByHood, data);
 
     window.onresize = createPricePerHoodChart.bind(null, barChartSvg, dataByHood);
 }
 
-function createPricePerHoodChart(el, dataByHood){
+function createPricePerHoodChart(el, dataByHood, data){
     let g = el;
     let width = +document.querySelector("#barchart_avgPrizePerZone").clientWidth - barChart_margin.left - barChart_margin.right;
     let height = +document.querySelector("#barchart_avgPrizePerZone").clientHeight - barChart_margin.top - barChart_margin.bottom;
@@ -47,11 +47,21 @@ function createPricePerHoodChart(el, dataByHood){
 
 
     const y_axis = d3.axisLeft(y_scale);
-
     let barChart = new Barchart(dataByHood, width, height, x_axis, y_axis, x_scale, y_scale);
     barChart.dataValueAccessorFn = d => d["value"];
     barChart.dataLabelAccessorFn = d => d["value"];
     barChart.labelFn = d => "$" + Math.fround( d["value"]).toFixed(2);
+    barChart.enableSelectionFn = (data_) => { 
+        var selection = data_.filter( v => v.selected ).map( v => v.key)
+        if(selection.length <= 0){
+            plotLocationScatterPlot( data, true )
+        } else {
+            var newData = data.filter( v => selection.includes(v.neighbourhood_group))
+            plotLocationScatterPlot( newData, true )
+        }
+        
+        
+    }
     barChart.draw(g);
 }
 
@@ -62,9 +72,8 @@ function unpack(rows, key) {
     });
 }
 
-function plotLocationScatterPlot(data) {
-
-    var quantileScale_ = d3.scaleQuantile().domain([d3.min(data, function(d){return +d.price}),  d3.max(data, function(d){return +d.price})]).range(d3.schemeRdYlGn[11].reverse())
+function plotLocationScatterPlot(data, update = false) {
+    var quantileScale_ = d3.scaleQuantile().domain([0, 500]).range([...d3.schemeRdYlGn[11]].reverse())
 
     function unpackColor(rows, key){
         return rows.map(function(row) {
@@ -89,5 +98,9 @@ function plotLocationScatterPlot(data) {
         margin: { r: 0, t: 0, b: 0, l: 0 },
     };
 
-    Plotly.newPlot("scatter_map_container", plotData, plotLayout);
+    if(update){
+        Plotly.react("scatter_map_container", plotData, plotLayout);
+    } else {
+        Plotly.newPlot("scatter_map_container", plotData, plotLayout);
+    }
 }

@@ -19,7 +19,8 @@ class Barchart{
     fontColor = "black";
     data = [];
     labelFn = null;
-
+    enableSelection = true;
+    enableSelectionFn = (data) => {}
     constructor(data, w, h, x_axis, y_axis, x_scale, y_scale ){
         this.data = data;
         this.width = w;
@@ -42,7 +43,7 @@ class Barchart{
         g.append("g")
             .call(self.y_axis);
         
-        g.selectAll(self.barClass)
+        let bars = g.selectAll(self.barClass)
             .data(self.data)
             .enter()
             .append("rect")
@@ -55,12 +56,35 @@ class Barchart{
             })
             .attr("width", function(d) { return self.x_scale(self.dataValueAccessorFn ? self.dataValueAccessorFn(d) : d) })
             .attr("height", function(d) { return self.y_scale.bandwidth() })
-            .on("mouseover", function(d, i){ 
-                d3.select(this).attr("fill", self.barColorHover)
+            .on("mouseover", function(d, i){
+                if(!d["selected"]){
+                    d3.select(this).attr("fill", self.barColorHover)
+                } else {
+                    d3.select(this).attr("fill", 'green')
+                }
             })
             .on("mouseleave", function(d, i){ 
-                d3.select(this).attr("fill", self.barColor)
+                if(!d["selected"]){
+                    d3.select(this).attr("fill", self.barColor)
+                } else {
+                    d3.select(this).attr("fill", 'green')
+                }
             });
+
+
+            if(self.enableSelection){
+                bars.on('click', function(d, i){
+                    if(!d["selected"]){
+                        d["selected"] = true;
+                        d3.select(this).attr("fill", 'green')
+                    } else {
+                        d["selected"] = false;
+                        d3.select(this).attr("fill", self.barColorHover)
+                    }                    
+                    self.enableSelectionFn(self.data)
+                });
+                
+            }
     
         g.selectAll(self.labelClass)
             .data(this.data)
