@@ -76,7 +76,7 @@ function plotLocationScatterPlot(data_) {
     console.log((color_scale(144)))
     console.log([d3.min(data, function(d){return +d.price}),  d3.max(data, function(d){return +d.price})])
     console.log(d3.schemeRdYlGn)
-    var quantileScale_ = d3.scaleQuantile().domain(unpack(data, 'price')). range(d3.schemeRdYlGn[11].reverse())
+    var quantileScale_ = d3.scaleQuantile().domain([0, 500]).range(d3.schemeRdYlGn[11].reverse())
     console.log(quantileScale_.quantiles(), quantileScale_(75))
 
     function unpackColor(rows, key){
