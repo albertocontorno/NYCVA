@@ -5,7 +5,7 @@ scatterPlot_margin = {top: 10, right: 30, bottom: 30, left: 60};
 const scatterPlotSvg = d3.select("#location_scatter_plot").append("g").attr("transform", "translate(" + scatterPlot_margin.left + "," + scatterPlot_margin.top + ")");
 
 d3.csv("./NYC_AirBnB_announcements.csv").then(function(data){
-
+    data = data.filter(d => d.price < 500)  //Remove outliers
     plotPricePerHoodChart(data);
     plotLocationScatterPlot(data);
 
@@ -56,35 +56,21 @@ function createPricePerHoodChart(el, dataByHood){
 }
 
 
+function unpack(rows, key) {
+    return rows.map(function(row) {
+        return row[key];
+    });
+}
 
-function plotLocationScatterPlot(data_) {
-    var data = data_.filter(d => d.price < 500)
-    function unpack(rows, key) {
-        return rows.map(function(row) {
-            return row[key];
-        });
-    }
-    console.log("LENGTH", data.length)
-    
-    var color_scale = d3.scaleLinear()
-            .domain([d3.min(data, function(d){return +d.price}),  d3.max(data, function(d){return +d.price})])
-            
-    var accent = d3.interpolateRdYlGn;
+function plotLocationScatterPlot(data) {
 
-
-    console.log((color_scale(150)))
-    console.log((color_scale(144)))
-    console.log([d3.min(data, function(d){return +d.price}),  d3.max(data, function(d){return +d.price})])
-    console.log(d3.schemeRdYlGn)
-    var quantileScale_ = d3.scaleQuantile().domain([0, 500]).range(d3.schemeRdYlGn[11].reverse())
-    console.log(quantileScale_.quantiles(), quantileScale_(75))
+    var quantileScale_ = d3.scaleQuantile().domain([d3.min(data, function(d){return +d.price}),  d3.max(data, function(d){return +d.price})]).range(d3.schemeRdYlGn[11].reverse())
 
     function unpackColor(rows, key){
         return rows.map(function(row) {
             return quantileScale_(+row[key]);
         });
     }
-
 
     var plotData = [
         {
@@ -97,11 +83,11 @@ function plotLocationScatterPlot(data_) {
         }
     ];
 
-    var layout = {
+    var plotLayout = {
         dragmode: "zoom",
-        mapbox: { style: "open-street-map", center: { lat: 40.75, lon: -73.94 }, zoom: 13 },
+        mapbox: { style: "open-street-map", center: { lat: 40.70, lon: -73.95 }, zoom: 10 },
         margin: { r: 0, t: 0, b: 0, l: 0 },
     };
 
-    Plotly.newPlot("scatter_map_container", plotData, layout);
+    Plotly.newPlot("scatter_map_container", plotData, plotLayout);
 }

@@ -14,13 +14,6 @@
                 text-align: center;
                 font-weight: bold
             }
-
-            rect.selection {
-                stroke          : gray;
-                stroke-dasharray: 4px;
-                stroke-opacity  : 0.5;
-                fill            : transparent;
-            }
         </style>
     </head>
 
@@ -34,12 +27,14 @@
         </div>
         <div class="row">
             <div class="col-md">
-                <div id="scatter_map_container"></div>
+                <div id="scatter_map_container" style="height: 750px"></div>
                 <div class="chart_label">Scatter plot of houses using latitude and longitude</div>
-                <button onclick="changePanAndZoom(this)">Disable Zoom</button>
             </div>
+            <div class="col-md"></div>
         </div>
         <div class="row"></div>
+
+
         <script src="./main.js"></script>
     </body>
 </html>
