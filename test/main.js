@@ -5,6 +5,7 @@ scatterPlot_margin = {top: 10, right: 30, bottom: 30, left: 60};
 const scatterPlotSvg = d3.select("#location_scatter_plot").append("g").attr("transform", "translate(" + scatterPlot_margin.left + "," + scatterPlot_margin.top + ")");
 
 d3.csv("./NYC_AirBnB_announcements_short.csv").then(function(data){
+    console.log(data[0])
     data = data.filter(d => d.price < 500);  //Remove outliers
     plotPricePerHoodChart(data);
     plotLocationScatterPlot(data);
@@ -131,4 +132,16 @@ function initAndPlotPCA(data){
 
 function plotBoxplot(data){
     const boxplot = new Boxplot(data, 'price', '', true, 'neighbourhood_group');
+    boxplot.draw('boxplot');
+    boxplot.drawGrouped('boxplot_grouped');
+    document.getElementById('boxplot_grouped').classList.toggle('hide');
+    document.getElementById('boxplot_btn').onclick = e => {
+        document.getElementById('boxplot').classList.toggle('hide');
+        document.getElementById('boxplot_grouped').classList.toggle('hide');
+        if(document.getElementById('boxplot').classList.contains('hide')){
+            document.getElementById('boxplot_btn').innerText = 'Grouped by neighbourhood';
+        } else {
+            document.getElementById('boxplot_btn').innerText = 'Grouped by room type';
+        }
+    };
 }

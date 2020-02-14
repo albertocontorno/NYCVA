@@ -19,6 +19,23 @@
                 text-align: center;
                 font-weight: bold
             }
+
+            .hide{
+                display: none;
+            }
+            .absolute_all{
+                position: absolute;
+                top: 0;
+                bottom: 0;
+                right: 0;
+                left: 0;
+            }
+            .absolute_bottom{
+                position: absolute;
+                bottom: 0;
+                right: 0;
+                left: 0;
+            }
         </style>
     </head>
 
@@ -28,26 +45,28 @@
                 <svg id="barchart_avgPrizePerZone" width="100%" height="225px"></svg>
                 <div class="chart_label">Mean Price per neighbourhood_group</div>
             </div>
-            <div class="col-xs">
-                <div id="boxplot"></div>
+            <div class="col-xs" style="position: relative; height:450px">
+                <div id="boxplot" class="absolute_all"></div>
+                <div id="boxplot_grouped" class="absolute_all"></div>
+                <div class="chart_label absolute_bottom"><button id="boxplot_btn">Grouped by room type</button> Prices' distributions</div>
             </div>
         </div>
         <div class="row">
-            <div class="col-md">
+            <div class="col-xs">
                 <div id="scatter_map_container" style="height: 750px"></div>
                 <div class="chart_label">Scatter plot of houses using latitude and longitude</div>
             </div>
-            <div class="col-md">
+            <div class="col-xs">
                 <svg id="word_cloud" width="100%" height="750px"></svg>
                 <div class="chart_label">Word Cloud</div>
             </div>
         </div>
         <div class="row">
-            <div class="col-md">
+            <div class="col-xs">
                 <div id="scatter_pca_container" style="height: 750px"></div>
                 <div class="chart_label">Scatter plot of PCA</div>
             </div>
-            <div class="col-md"></div>
+            <div class="col-xs"></div>
         </div>
         <div class="row"></div>
 
