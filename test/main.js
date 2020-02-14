@@ -11,6 +11,7 @@ d3.csv("./NYC_AirBnB_announcements_short.csv").then(function(data){
     plotLocationScatterPlot(data);
     plotWordCloud(data);
     plotBoxplot(data);
+    plotViolinplot(data);
 });
 
 d3.csv("./NYC_AirBnB_announcements_short_PCA.csv").then(function(data){
@@ -142,6 +143,23 @@ function plotBoxplot(data){
             document.getElementById('boxplot_btn').innerText = 'Grouped by neighbourhood';
         } else {
             document.getElementById('boxplot_btn').innerText = 'Grouped by room type';
+        }
+    };
+}
+
+function plotViolinplot(data){
+    const violinplot = new Violinplot(data, 'price', '', true, 'neighbourhood_group');
+    violinplot.draw('violionplot');
+    violinplot.drawGrouped('violionplot_grouped');
+    document.getElementById('violionplot_grouped').classList.toggle('hide');
+    
+    document.getElementById('violionplot_btn').onclick = e => {
+        document.getElementById('violionplot').classList.toggle('hide');
+        document.getElementById('violionplot_grouped').classList.toggle('hide');
+        if(document.getElementById('violionplot').classList.contains('hide')){
+            document.getElementById('violionplot_btn').innerText = 'Grouped by neighbourhood';
+        } else {
+            document.getElementById('violionplot_btn').innerText = 'Grouped by room type';
         }
     };
 }

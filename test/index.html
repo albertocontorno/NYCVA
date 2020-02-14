@@ -8,6 +8,7 @@
         <script src="./Barchart.js"></script>
         <script src="./WordCloud.js"></script>
         <script src="./Boxplot.js"></script>
+        <script src="./Violinplot.js"></script>
         <script src="PCAPlotter.js"></script>
         <script src="https://d3js.org/d3.v5.min.js"></script>
         <script src="https://cdn.plot.ly/plotly-latest.js"></script>
@@ -45,12 +46,22 @@
                 <svg id="barchart_avgPrizePerZone" width="100%" height="225px"></svg>
                 <div class="chart_label">Mean Price per neighbourhood_group</div>
             </div>
+            <div class="col-xs"></div>
+        </div>
+
+        <div class="row">
+            <div class="col-xs" style="position: relative; height:450px">
+                <div id="violionplot" class="absolute_all"></div>
+                <div id="violionplot_grouped" class="absolute_all"></div>
+                <div class="chart_label absolute_bottom"><button id="violionplot_btn">Grouped by room type</button> Prices' distributions</div>
+            </div>
             <div class="col-xs" style="position: relative; height:450px">
                 <div id="boxplot" class="absolute_all"></div>
                 <div id="boxplot_grouped" class="absolute_all"></div>
                 <div class="chart_label absolute_bottom"><button id="boxplot_btn">Grouped by room type</button> Prices' distributions</div>
             </div>
         </div>
+
         <div class="row">
             <div class="col-xs">
                 <div id="scatter_map_container" style="height: 750px"></div>
@@ -61,6 +72,7 @@
                 <div class="chart_label">Word Cloud</div>
             </div>
         </div>
+        
         <div class="row">
             <div class="col-xs">
                 <div id="scatter_pca_container" style="height: 750px"></div>

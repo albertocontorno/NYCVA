@@ -1,4 +1,4 @@
-class Boxplot{
+class Violinplot{
 
     data = [];
     boxTitle = '';
@@ -32,8 +32,11 @@ class Boxplot{
                     y: el['value'],
                     boxpoints: 'all',
                     showlegend: false,
-                    type: 'box',
-                    name: el['key']
+                    type: 'violin',
+                    name: el['key'],
+                    box: {
+                        visible: true
+                      },
                 };    
                 traces.push(trace);
             });
@@ -68,8 +71,11 @@ class Boxplot{
                 y: [],
                 boxpoints: 'all',
                 showlegend: true,
-                type: 'box',
-                name: el['key']
+                type: 'violin',
+                name: el['key'],
+                box: {
+                    visible: true
+                  },
             }
             el.values.forEach( v => {
                 x.push(...new Array(v['value'].length).fill(v['key']));
@@ -82,7 +88,8 @@ class Boxplot{
               //title: 'normalized moisture',
               zeroline: true
             },
-            boxmode: 'group'
+            boxmode: 'group',
+            violinmode: 'group'
           };
         console.log(self.traces)
         Plotly.newPlot(domElement, traces, layout);
