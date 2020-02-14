@@ -37,7 +37,8 @@ class Boxplot{
                 };    
                 traces.push(trace);
             });
-            Plotly.newPlot(domElement, traces);
+            var config = {responsive: true}
+            Plotly.newPlot(domElement, traces, null, config);
         } else {
             const self = this;
             var trace = {
@@ -46,7 +47,8 @@ class Boxplot{
                 name: self.data['key']
             };
             traces.push(trace);
-            Plotly.newPlot(domElement, traces);
+            var config = {responsive: true}
+            Plotly.newPlot(domElement, traces, null, config);
         }
  
     }
@@ -85,6 +87,7 @@ class Boxplot{
             boxmode: 'group'
           };
         console.log(self.traces)
-        Plotly.newPlot(domElement, traces, layout);
+        var config = {responsive: true}
+        Plotly.newPlot(domElement, traces, layout, config);
     }
 }

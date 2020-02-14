@@ -108,9 +108,11 @@ function plotLocationScatterPlot(data, update = false) {
 
     var graphDiv = document.getElementById('scatter_map_container');
     if(update){
-        Plotly.react(graphDiv, plotData, plotLayout);
+        var config = {responsive: true}
+        Plotly.react(graphDiv, plotData, plotLayout, config);
     } else {
-        Plotly.newPlot(graphDiv, plotData, plotLayout);
+        var config = {responsive: true}
+        Plotly.newPlot(graphDiv, plotData, plotLayout, config);
         graphDiv.on('plotly_selected', function(eventData) {
             console.log(eventData.points);
             console.log(data[eventData.points[0].pointIndex], eventData.points[0].pointIndex)
@@ -141,8 +143,10 @@ function plotBoxplot(data){
         document.getElementById('boxplot_grouped').classList.toggle('hide');
         if(document.getElementById('boxplot').classList.contains('hide')){
             document.getElementById('boxplot_btn').innerText = 'Grouped by neighbourhood';
+            Plotly.Plots.resize(d3.select('#boxplot_grouped').node());
         } else {
             document.getElementById('boxplot_btn').innerText = 'Grouped by room type';
+            Plotly.Plots.resize(d3.select('#boxplot').node());
         }
     };
 }
@@ -158,8 +162,10 @@ function plotViolinplot(data){
         document.getElementById('violionplot_grouped').classList.toggle('hide');
         if(document.getElementById('violionplot').classList.contains('hide')){
             document.getElementById('violionplot_btn').innerText = 'Grouped by neighbourhood';
+            Plotly.Plots.resize(d3.select('#violionplot_grouped').node());
         } else {
             document.getElementById('violionplot_btn').innerText = 'Grouped by room type';
+            Plotly.Plots.resize(d3.select('#violionplot').node());
         }
     };
 }

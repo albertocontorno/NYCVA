@@ -57,7 +57,8 @@ function plotPCAScatterPlot(data, callback) {
     var dataToPlot = [trace1];
 
     var PCADiv = document.getElementById('scatter_pca_container');
-    Plotly.newPlot(PCADiv, dataToPlot);
+    var config = {responsive: true}
+    Plotly.newPlot(PCADiv, dataToPlot, null, config);
 
     PCADiv.on('plotly_selected', function(eventData) {
         console.log(eventData.points);
