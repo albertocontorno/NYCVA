@@ -9,6 +9,7 @@ d3.csv("./NYC_AirBnB_announcements_short.csv").then(function(data){
     plotPricePerHoodChart(data);
     plotLocationScatterPlot(data);
     plotWordCloud(data);
+    plotBoxplot(data);
 });
 
 d3.csv("./NYC_AirBnB_announcements_short_PCA.csv").then(function(data){
@@ -126,4 +127,8 @@ function initAndPlotPCA(data){
         plotLocationScatterPlot(updatedData, true);
     };
     pca.initPlotter();
+}
+
+function plotBoxplot(data){
+    const boxplot = new Boxplot(data, 'price', '', true, 'neighbourhood_group');
 }
