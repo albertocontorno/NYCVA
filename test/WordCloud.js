@@ -37,7 +37,7 @@ class WordCloud{
             return;
         }
 
-        const fontSizeScale = d3.scaleLinear().domain([myWords[myWords.length-1].size, myWords[0].size]).range([self.fontMinSize, self.fontMaxSize])
+        const fontSizeScale = d3.scaleLinear().domain([myWords[myWords.length-1].size, myWords[0].size]).range([self.fontMinSize, self.fontMaxSize]);
 
         // set the dimensions and margins of the graph
         var margin = {top: 10, right: 10, bottom: 10, left: 10},

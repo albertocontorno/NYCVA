@@ -5,7 +5,7 @@ class Boxplot{
     multiple = true;
     dataGrouped = [];
     groupKey = 'neighbourhood_group';
-    groupSubKey = 'room_type'
+    groupSubKey = 'room_type';
     valueKey = 'name';
 
     constructor(data, valueKey, boxTitle, multiple, groupKey){
@@ -37,7 +37,7 @@ class Boxplot{
                 };    
                 traces.push(trace);
             });
-            var config = {responsive: true}
+            var config = {responsive: true};
             Plotly.newPlot(domElement, traces, null, config);
         } else {
             const self = this;
@@ -47,7 +47,7 @@ class Boxplot{
                 name: self.data['key']
             };
             traces.push(trace);
-            var config = {responsive: true}
+            var config = {responsive: true};
             Plotly.newPlot(domElement, traces, null, config);
         }
  
@@ -72,7 +72,7 @@ class Boxplot{
                 showlegend: true,
                 type: 'box',
                 name: el['key']
-            }
+            };
             el.values.forEach( v => {
                 x.push(...new Array(v['value'].length).fill(v['key']));
                 trace.y.push(...v['value'])
@@ -86,8 +86,8 @@ class Boxplot{
             },
             boxmode: 'group'
           };
-        console.log(self.traces)
-        var config = {responsive: true}
+        console.log(self.traces);
+        var config = {responsive: true};
         Plotly.newPlot(domElement, traces, layout, config);
     }
 }

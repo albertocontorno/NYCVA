@@ -5,7 +5,7 @@ scatterPlot_margin = {top: 10, right: 30, bottom: 30, left: 60};
 const scatterPlotSvg = d3.select("#location_scatter_plot").append("g").attr("transform", "translate(" + scatterPlot_margin.left + "," + scatterPlot_margin.top + ")");
 
 d3.csv("./NYC_AirBnB_announcements_short.csv").then(function(data){
-    console.log(data[0])
+    console.log(data[0]);
     data = data.filter(d => d.price < 500);  //Remove outliers
     plotPricePerHoodChart(data);
     plotLocationScatterPlot(data);
@@ -108,10 +108,10 @@ function plotLocationScatterPlot(data, update = false) {
 
     var graphDiv = document.getElementById('scatter_map_container');
     if(update){
-        var config = {responsive: true}
+        var config = {responsive: true};
         Plotly.react(graphDiv, plotData, plotLayout, config);
     } else {
-        var config = {responsive: true}
+        var config = {responsive: true};
         Plotly.newPlot(graphDiv, plotData, plotLayout, config);
         graphDiv.on('plotly_selected', function(eventData) {
             console.log(eventData.points);
