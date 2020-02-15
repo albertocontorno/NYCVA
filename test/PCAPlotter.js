@@ -71,6 +71,7 @@ function plotPCAScatterPlot(data, callback) {
             colors[pt.pointNumber] = '#941a20'; // Select color
         });
 
+        Plotly.restyle(PCADiv, {selectedpoints: [null]}, [0]);
         Plotly.restyle(PCADiv, 'marker.color', [colors], [0]);
 
         callback(eventData);
