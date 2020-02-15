@@ -81,13 +81,25 @@ function unpack(rows, key) {
 }
 
 function plotLocationScatterPlot(data, update = false) {
-    var quantileScale_ = d3.scaleQuantile().domain([0, 500]).range([...d3.schemeRdYlGn[11]].reverse())
+    var quantileScale_ = d3.scaleLinear().domain([0, 500]).range([0,500])
+    //d3.scaleQuantile().domain([0, 500]).range([0,1])
 
     function unpackColor(rows, key){
         return rows.map(function(row) {
             return quantileScale_(+row[key]);
         });
     }
+
+    const scl = [[0, "#440154"],
+        [0.1111111111111111, "#482878"],
+        [0.2222222222222222, "#3e4989"],
+        [0.3333333333333333, "#31688e"],
+        [0.4444444444444444, "#26828e"],
+        [0.5555555555555556, "#1f9e89"],
+        [0.6666666666666666, "#35b779"],
+        [0.7777777777777778, "#6ece58"],
+        [0.8888888888888888, "#b5de2b"],
+        [1, "#fde725"]];
 
     var plotData = [
         {
@@ -96,7 +108,12 @@ function plotLocationScatterPlot(data, update = false) {
             lon: unpack(data, "longitude"),
             lat: unpack(data, "latitude"),
             //marker: { color: function(d){return accent(d)}, size: 4 }
-            marker: {color: unpackColor(data, 'price')}
+            marker: {color: unpack(data, 'price'),
+                colorscale: scl,
+                reversescale: true,
+                //"autocolorscale": false,
+                "showscale": true
+            }
         }
     ];
 
