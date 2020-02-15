@@ -4,25 +4,29 @@ const barChartSvg = d3.select("#barchart_avgPrizePerZone").append("g").attr("tra
 scatterPlot_margin = {top: 10, right: 30, bottom: 30, left: 60};
 const scatterPlotSvg = d3.select("#location_scatter_plot").append("g").attr("transform", "translate(" + scatterPlot_margin.left + "," + scatterPlot_margin.top + ")");
 
-d3.csv("./NYC_AirBnB_announcements_short.csv").then(function(data){
-    console.log(data[0]);
-    data = data.filter(d => d.price < 500);  //Remove outliers
-    plotPricePerHoodChart(data);
-    plotLocationScatterPlot(data);
-    plotWordCloud(data);
-    plotBoxplot(data);
-    plotViolinplot(data);
-    plotStackedplot(data);
-});
+var dataset;
+var pcaDataset;
 
-d3.csv("./NYC_AirBnB_announcements_short_PCA.csv").then(function(data){
-    data = data.filter(d => d.price < 500); //Remove outliers
-    initAndPlotPCA(data);
-});
+Promise.all([d3.csv("./NYC_AirBnB_announcements_short.csv"), d3.csv("./NYC_AirBnB_announcements_short_PCA.csv")]).then( values => {
 
+    var data = values[0];
+    dataset = data.filter(d => d.price < 500);  //Remove outliers
+    console.log(dataset);
+    plotPricePerHoodChart(dataset);
+    plotLocationScatterPlot(dataset);
+    plotWordCloud(dataset);
+    plotBoxplot(dataset);
+    plotViolinplot(dataset);
+    plotStackedplot(dataset);
+    
+
+    var pcaData = values[1];
+    pcaDataset = pcaData.filter(d => d.price < 500); //Remove outliers
+    initAndPlotPCA(pcaDataset);
+})
 
 function plotPricePerHoodChart(data) {
-    data = data.sort( (a,b)=> a["price"] - b["price"]);
+    //var sortedByPricedata = data.sort( (a,b)=> a["price"] - b["price"]);
 
     const dataByHood = d3.nest()
         .key(function(d) { return d["neighbourhood_group"]; })
@@ -82,6 +86,15 @@ function unpack(rows, key) {
 
 function plotLocationScatterPlot(data, update = false) {
     
+
+    const color_scale = d3.scaleQuantile().domain([0, 500]).range(["#440154", "#482878", "#3e4989", "#31688e", "#26828e", "#1f9e89", "#35b779", "#6ece58", "#b5de2b", "#fde725"].reverse());
+
+    function unpackColor(rows, key){
+        return rows.map(function(row) {
+            return color_scale((row[key]));
+        });
+    }
+
     const scl = [[0, "#440154"],
     [0.1111111111111111, "#482878"],
     [0.2222222222222222, "#3e4989"],
@@ -96,11 +109,11 @@ function plotLocationScatterPlot(data, update = false) {
     var plotData = [
         {
             type: "scattermapbox",
-            text: unpack(data, "name"),
-            lon: unpack(data, "longitude"),
-            lat: unpack(data, "latitude"),
+            text: unpack(dataset, "price"),
+            lon: unpack(dataset, "longitude"),
+            lat: unpack(dataset, "latitude"),
             marker: {
-                color: unpack(data, 'price'), 
+                color: unpackColor(dataset, 'price'),//unpack(dataset, 'price'), 
                 cmax: 500, 
                 cmin: 0,
                 colorscale: scl,
@@ -126,12 +139,22 @@ function plotLocationScatterPlot(data, update = false) {
     };
 
     var graphDiv = document.getElementById('scatter_map_container');
+    
     if(update){
+        var colors = [];
+        for(var i = 0; i < dataset.length; i++) colors.push(dataset[i]['price']); //Starting color
+
+        data.forEach(function(pt) {
+            const index = dataset.findIndex( v => v == pt );
+            colors[index] = '#941a20'; // Select color
+        });
+
         var config = {responsive: true, mapboxAccessToken: 'pk.eyJ1IjoiY2hyaWRkeXAiLCJhIjoiY2lxMnVvdm5iMDA4dnhsbTQ5aHJzcGs0MyJ9.X9o_rzNLNesDxdra4neC_A'};
         Plotly.react(graphDiv, plotData, plotLayout, config);
+        Plotly.restyle(graphDiv, 'marker.color', [colors], [0]);
     } else {
         var config = {responsive: true, mapboxAccessToken: 'pk.eyJ1IjoiY2hyaWRkeXAiLCJhIjoiY2lxMnVvdm5iMDA4dnhsbTQ5aHJzcGs0MyJ9.X9o_rzNLNesDxdra4neC_A'};
-        Plotly.newPlot(graphDiv, plotData, plotLayout, config);
+        plot = Plotly.newPlot(graphDiv, plotData, plotLayout, config);
         graphDiv.on('plotly_selected', function(eventData) {
             console.log(eventData.points);
             console.log(data[eventData.points[0].pointIndex], eventData.points[0].pointIndex)
@@ -146,7 +169,37 @@ function plotWordCloud(data){
 
 function initAndPlotPCA(data){
     const pca = new PCAPlotter(data);
-    pca.callback = (updatedData) => {
+    
+    pca.callback = (eventData) => {
+
+        /* var allTheAnnouncements = [];
+        d3.csv("./NYC_AirBnB_announcements_short.csv").then(function(data){
+            allTheAnnouncements = data.filter(d => d.price < 500);
+            console.log(allTheAnnouncements)
+            var updatedData = [];
+            eventData.points.forEach(v => {
+                const point = allTheAnnouncements[v.pointIndex];
+                if(point == null){
+                    console.log("ERRORE NULL")
+                } else {
+                    updatedData.push(allTheAnnouncements[v.pointIndex])
+                }
+            })
+            plotLocationScatterPlot(updatedData, true);
+        }); */
+        
+
+
+        var updatedData = [];
+        eventData.points.forEach(v => {
+            const point = dataset[v.pointIndex];
+            if(point == null){
+                console.log("ERRORE NULL")
+            } else {
+                updatedData.push(point)
+            }
+        });
+        console.log(updatedData)
         plotLocationScatterPlot(updatedData, true);
     };
     pca.initPlotter();

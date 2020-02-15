@@ -66,44 +66,16 @@ function plotPCAScatterPlot(data, callback) {
         //Code to restyle points, TODO this should be done also on other graphs, it should be enough to get the reference to the div, and do the same
         //TODO dobbiamo capire come gestire a livello di codice la dinamica per la quale in qualunque grafo fai una selection si ripercuote su gli altri
         //Insights utili qui: https://plot.ly/javascript/plotlyjs-events   al "select event"
-        var x = [];
-        var y = [];
-
         var colors = [];
         for(var i = 0; i < data.adjustedData[0].length; i++) colors.push('#1f77b4'); //Starting color
 
         eventData.points.forEach(function(pt) {
-            x.push(pt.x);
-            y.push(pt.y);
             colors[pt.pointNumber] = '#941a20'; // Select color
         });
 
-        Plotly.restyle(PCADiv, {
-            x: [x, y],
-            xbins: {}
-        }, [1, 2]);
         Plotly.restyle(PCADiv, 'marker.color', [colors], [0]);
 
-
-
-        var allTheAnnouncements = [];
-        d3.csv("./NYC_AirBnB_announcements_short.csv").then(function(data){
-            allTheAnnouncements = data.filter(d => d.price < 500);
-
-            var updatedData = [];
-            eventData.points.forEach(v => {
-                const point = allTheAnnouncements[v.pointIndex];
-                if(point == null){
-                    console.log("ERRORE NULL")
-                } else {
-                    updatedData.push(allTheAnnouncements[v.pointIndex])
-                }
-
-            });
-
-            callback(updatedData)
-
-        });
+        callback(eventData);
 
     });
 }
