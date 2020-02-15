@@ -96,16 +96,26 @@ function plotLocationScatterPlot(data, update = false) {
     var plotData = [
         {
             type: "scattermapbox",
-            text: unpack(data, "price"),
+            text: unpack(data, "name"),
             lon: unpack(data, "longitude"),
             lat: unpack(data, "latitude"),
-            //marker: { color: function(d){return accent(d)}, size: 4 }
-            marker: {color: unpack(data, 'price'),
+            marker: {
+                color: unpack(data, 'price'), 
+                cmax: 500, 
+                cmin: 0,
                 colorscale: scl,
                 reversescale: true,
-                //"autocolorscale": false,
-                "showscale": true
-            }
+                size: 6,
+                showscale: true,
+                colorbar:{
+                    thickness: 15,
+                    ticksuffix: ' $',
+                    ticks: 'outside',
+                    ticklen: 5,
+                }
+            },
+            hoverlabel: {namelength: 0},
+            hovertemplate: "<b>Price</b>: %{marker.color}  $ <br>%{text}"
         }
     ];
 
