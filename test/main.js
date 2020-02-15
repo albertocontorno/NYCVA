@@ -102,17 +102,16 @@ function plotLocationScatterPlot(data, update = false) {
 
     var plotLayout = {
         dragmode: "zoom",
-        mapbox: { style: "open-street-map", center: { lat: 40.70, lon: -73.95 }, zoom: 10 },
+        mapbox: { style: "light", center: { lat: 40.70, lon: -73.95 }, zoom: 10 },
         margin: { r: 0, t: 0, b: 0, l: 0 },
     };
 
-
     var graphDiv = document.getElementById('scatter_map_container');
     if(update){
-        var config = {responsive: true};
+        var config = {responsive: true, mapboxAccessToken: 'pk.eyJ1IjoiY2hyaWRkeXAiLCJhIjoiY2lxMnVvdm5iMDA4dnhsbTQ5aHJzcGs0MyJ9.X9o_rzNLNesDxdra4neC_A'};
         Plotly.react(graphDiv, plotData, plotLayout, config);
     } else {
-        var config = {responsive: true};
+        var config = {responsive: true, mapboxAccessToken: 'pk.eyJ1IjoiY2hyaWRkeXAiLCJhIjoiY2lxMnVvdm5iMDA4dnhsbTQ5aHJzcGs0MyJ9.X9o_rzNLNesDxdra4neC_A'};
         Plotly.newPlot(graphDiv, plotData, plotLayout, config);
         graphDiv.on('plotly_selected', function(eventData) {
             console.log(eventData.points);
