@@ -12,6 +12,7 @@ d3.csv("./NYC_AirBnB_announcements_short.csv").then(function(data){
     plotWordCloud(data);
     plotBoxplot(data);
     plotViolinplot(data);
+    plotStackedplot(data);
 });
 
 d3.csv("./NYC_AirBnB_announcements_short_PCA.csv").then(function(data){
@@ -168,4 +169,9 @@ function plotViolinplot(data){
             Plotly.Plots.resize(d3.select('#violionplot').node());
         }
     };
+}
+
+function plotStackedplot(data){
+    var stackedplot = new StackedBarchart(data, 'price', '', 'neighbourhood_group', 'room_type');
+    stackedplot.draw('room_types');
 }
