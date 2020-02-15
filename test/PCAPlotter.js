@@ -61,6 +61,7 @@ function plotPCAScatterPlot(data, callback) {
     Plotly.newPlot(PCADiv, dataToPlot, null, config);
 
     PCADiv.on('plotly_selected', function(eventData) {
+        if(!eventData) {eventData = {}; eventData.points = []}
         console.log(eventData.points);
 
         var colors = [];
