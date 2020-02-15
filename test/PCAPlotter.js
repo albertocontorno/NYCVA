@@ -63,9 +63,6 @@ function plotPCAScatterPlot(data, callback) {
     PCADiv.on('plotly_selected', function(eventData) {
         console.log(eventData.points);
 
-        //Code to restyle points, TODO this should be done also on other graphs, it should be enough to get the reference to the div, and do the same
-        //TODO dobbiamo capire come gestire a livello di codice la dinamica per la quale in qualunque grafo fai una selection si ripercuote su gli altri
-        //Insights utili qui: https://plot.ly/javascript/plotlyjs-events   al "select event"
         var colors = [];
         for(var i = 0; i < data.adjustedData[0].length; i++) colors.push('#1f77b4'); //Starting color
 

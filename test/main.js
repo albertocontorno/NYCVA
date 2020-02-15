@@ -11,7 +11,6 @@ Promise.all([d3.csv("./NYC_AirBnB_announcements_short.csv"), d3.csv("./NYC_AirBn
 
     var data = values[0];
     dataset = data.filter(d => d.price < 500);  //Remove outliers
-    console.log(dataset);
     plotPricePerHoodChart(dataset);
     plotLocationScatterPlot(dataset);
     plotWordCloud(dataset);
@@ -23,10 +22,9 @@ Promise.all([d3.csv("./NYC_AirBnB_announcements_short.csv"), d3.csv("./NYC_AirBn
     var pcaData = values[1];
     pcaDataset = pcaData.filter(d => d.price < 500); //Remove outliers
     initAndPlotPCA(pcaDataset);
-})
+});
 
 function plotPricePerHoodChart(data) {
-    //var sortedByPricedata = data.sort( (a,b)=> a["price"] - b["price"]);
 
     const dataByHood = d3.nest()
         .key(function(d) { return d["neighbourhood_group"]; })
@@ -172,24 +170,6 @@ function initAndPlotPCA(data){
     
     pca.callback = (eventData) => {
 
-        /* var allTheAnnouncements = [];
-        d3.csv("./NYC_AirBnB_announcements_short.csv").then(function(data){
-            allTheAnnouncements = data.filter(d => d.price < 500);
-            console.log(allTheAnnouncements)
-            var updatedData = [];
-            eventData.points.forEach(v => {
-                const point = allTheAnnouncements[v.pointIndex];
-                if(point == null){
-                    console.log("ERRORE NULL")
-                } else {
-                    updatedData.push(allTheAnnouncements[v.pointIndex])
-                }
-            })
-            plotLocationScatterPlot(updatedData, true);
-        }); */
-        
-
-
         var updatedData = [];
         eventData.points.forEach(v => {
             const point = dataset[v.pointIndex];
@@ -199,8 +179,8 @@ function initAndPlotPCA(data){
                 updatedData.push(point)
             }
         });
-        console.log(updatedData)
         plotLocationScatterPlot(updatedData, true);
+
     };
     pca.initPlotter();
 }
