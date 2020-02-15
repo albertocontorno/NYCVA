@@ -154,8 +154,20 @@ function plotLocationScatterPlot(data, update = false) {
         var config = {responsive: true, mapboxAccessToken: 'pk.eyJ1IjoiY2hyaWRkeXAiLCJhIjoiY2lxMnVvdm5iMDA4dnhsbTQ5aHJzcGs0MyJ9.X9o_rzNLNesDxdra4neC_A'};
         plot = Plotly.newPlot(graphDiv, plotData, plotLayout, config);
         graphDiv.on('plotly_selected', function(eventData) {
+            if(!eventData) {eventData = {}; eventData.points = []}
             console.log(eventData.points);
-            console.log(data[eventData.points[0].pointIndex], eventData.points[0].pointIndex)
+            //console.log(data[eventData.points[0].pointIndex], eventData.points[0].pointIndex);
+
+            var colors = [];
+            for(var i = 0; i < dataset.length; i++) colors.push(dataset[i]['price']); //Starting color
+
+            eventData.points.forEach(function(pt) {
+                colors[pt.pointNumber] = '#941a20'; // Select color
+            });
+
+            Plotly.restyle(graphDiv, {selectedpoints: [null]}, [0]);
+            Plotly.restyle(graphDiv, 'marker.color', [colors], [0]);
+
         });
     }
 }
