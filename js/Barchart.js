@@ -12,14 +12,13 @@ class Barchart{
     dataLabelAccessorFn = null;
     barColor = 'steelblue';
     barColorHover = 'orange';
-    yOffset = 35;
     xOffset = 1;
-    barHeight = 30;
     fontSize = "14px";
     fontColor = "black";
     data = [];
     labelFn = null;
-
+    enableSelection = true;
+    enableSelectionFn = (data) => {};
     constructor(data, w, h, x_axis, y_axis, x_scale, y_scale ){
         this.data = data;
         this.width = w;
@@ -38,11 +37,11 @@ class Barchart{
         g.append("g")
             .attr("transform", "translate(0," + self.height + ")")
             .call(self.x_axis);
-    
+
         g.append("g")
             .call(self.y_axis);
-        
-        g.selectAll(self.barClass)
+
+        let bars = g.selectAll(self.barClass)
             .data(self.data)
             .enter()
             .append("rect")
@@ -55,13 +54,36 @@ class Barchart{
             })
             .attr("width", function(d) { return self.x_scale(self.dataValueAccessorFn ? self.dataValueAccessorFn(d) : d) })
             .attr("height", function(d) { return self.y_scale.bandwidth() })
-            .on("mouseover", function(d, i){ 
-                d3.select(this).attr("fill", self.barColorHover)
+            .on("mouseover", function(d, i){
+                if(!d["selected"]){
+                    d3.select(this).attr("fill", self.barColorHover)
+                } else {
+                    d3.select(this).attr("fill", 'green')
+                }
             })
-            .on("mouseleave", function(d, i){ 
-                d3.select(this).attr("fill", self.barColor)
+            .on("mouseleave", function(d, i){
+                if(!d["selected"]){
+                    d3.select(this).attr("fill", self.barColor)
+                } else {
+                    d3.select(this).attr("fill", 'green')
+                }
             });
-    
+
+
+        if(self.enableSelection){
+            bars.on('click', function(d, i){
+                if(!d["selected"]){
+                    d["selected"] = true;
+                    d3.select(this).attr("fill", 'green')
+                } else {
+                    d["selected"] = false;
+                    d3.select(this).attr("fill", self.barColorHover)
+                }
+                self.enableSelectionFn(self.data)
+            });
+
+        }
+
         g.selectAll(self.labelClass)
             .data(this.data)
             .enter()
@@ -72,6 +94,6 @@ class Barchart{
             .attr("font-size", self.fontSize)
             .attr("fill", self.fontColor)
             .attr("x", function(d) { return self.x_scale(d["value"]) - 5; })
-            .attr("y", function(d, i) { console.dir(this); console.log(self.y_scale.bandwidth(), self.y_scale(d["key"]) + (self.y_scale.bandwidth() / 2) + (this.getBoundingClientRect().y/2)); return self.y_scale(d["key"]) + (self.y_scale.bandwidth() / 2) + 5});
+            .attr("y", function(d, i) {return self.y_scale(d["key"]) + (self.y_scale.bandwidth() / 2) + 5});
     }
 }
