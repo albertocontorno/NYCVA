@@ -7,6 +7,8 @@ const scatterPlotSvg = d3.select("#location_scatter_plot").append("g").attr("tra
 var dataset;
 var pcaDataset;
 
+var pca;
+
 Promise.all([d3.csv("./NYC_AirBnB_announcements_short.csv"), d3.csv("./NYC_AirBnB_announcements_short_PCA.csv")]).then( values => {
 
     var data = values[0];
@@ -21,7 +23,8 @@ Promise.all([d3.csv("./NYC_AirBnB_announcements_short.csv"), d3.csv("./NYC_AirBn
 
     var pcaData = values[1];
     pcaDataset = pcaData.filter(d => d.price < 500); //Remove outliers
-    initAndPlotPCA(pcaDataset);
+    pca = new PCAPlotter(pcaDataset);
+    initAndPlotPCA();
 });
 
 function plotPricePerHoodChart(data) {
@@ -168,6 +171,8 @@ function plotLocationScatterPlot(data, update = false) {
             Plotly.restyle(graphDiv, {selectedpoints: [null]}, [0]);
             Plotly.restyle(graphDiv, 'marker.color', [colors], [0]);
 
+            pca.plotPCAScatterPlot(eventData, true);
+
         });
     }
 }
@@ -177,9 +182,8 @@ function plotWordCloud(data){
     wordCloud.plotWordCloud();
 }
 
-function initAndPlotPCA(data){
-    const pca = new PCAPlotter(data);
-    
+function initAndPlotPCA(){
+
     pca.callback = (eventData) => {
 
         var updatedData = [];
