@@ -41,35 +41,64 @@
 
 
 \section{Introduction to the analysis}
-Housing websites like {\em AirBnB} \cite{ABNB} are amongst the sites that globally generate more traffic \cite{ABNBTRAFFIC}. Even with the impressive unseen work that ensures the navigating the site is as pleasurable as possible, with the huge amount of data it can be quite hard to get a grasp on the actual informations that we, as users, are looking for. Our work will try to give some, otherwise hard to see, insights about the announcements with the help of visual analytics. Obviously doing it on a global scale would be too computationally heavy for our resources so the analysis will be limited to one of the cities that has the most announcements on the site; {\em New York City}.
+Housing websites like {\em AirBnB} \cite{ABNB} are amongst the sites that globally generate more traffic \cite{ABNBTRAFFIC}. Even with the impressive unseen work that ensures the navigating the site is as pleasurable as possible, with the huge amount of data it can be quite hard to get a grasp on the actual informations that we, as users, are looking for. Our work will try to give some, otherwise, hard to see insights about the announcements, with the help of visual analytics. Obviously doing it on a global scale would be too computationally heavy for our resources so the analysis will be limited to one of the cities that has the most announcements on the site; {\em New York City}.
 
 \section{Description of the dataset}
 The dataset that is going to be used was provided from {\em Kaggle} \cite{KAGGLE}, and it is made of around 50000 tuples with 16 attributes each \cite{NYCDATASET}. We are perfectly aware of the fact that this means that our {\em ``AS index"} is quite higher than the suggested one, which means that we are faced with 2 options: reduce the amount of attributes and/or tuples, or build a small backend server (probably in {\em NodeJS}) on which to decouple the computational load to make the web browser more responsive.\\
 Each tuple of the set represents an announcement on the AirBnB website for a house in New York City, some of the most useful attributes are: the location of the house (both its neighbourhood and its coordinates), its cost, the average availability, and the amount of reviews. These information will be used to identify patterns and gather insights about the distribution of rental housing in NYC in order to have a visual representation of the best options available.
 
 \section{Goals of the Analysis}
-An analyisis of this kind can be used to fulfill multiple objectives; firstly as alreay stated the multiple visualizations will allow to see otherwise hidden informations, such as for example the average price in each neighbourhood, or the estimated income of the various hosts. This means that both someone who is willing to put a announcement on the website and someone who is looking for a accomodation, will be able to find useful informations.\\
-Moreover we could apply some dimensionality reduction algorithms such as {\em PCA} or {\em t-SNE} to gather informations about similar announcements, which could for example be used to find an announcement similar to one that we like, but that might be unavailable.
+An analysis of this kind can be used to fulfill multiple objectives; firstly as already stated the multiple visualizations will allow to see otherwise hidden information, such as for example the average price in each neighbourhood, or the estimated income of the various hosts. This means that both someone who is willing to put a announcement on the website and someone who is looking for an accomodation, will be able to find useful information.\\
+Moreover we could apply some dimensionality reduction algorithms such as {\em PCA} or {\em t-SNE} to gather informations about similar announcements, which could for example be used to find an announcement similar to one that we like, but that might be unavailable.\\
+As for non-functional requirements, we want to make sure that the tool can be used on a wide range of systems and devices, this means that responsiveness and performance will be always taken into consideration during our development.
 
 \section{Dataset preprocessing}
-The given dataset was already quite ready to be used, as there were no duplicates and the attribute's types were coherenent and almost always not null.\\
-Even with this said some preprocessing was necessary, what we did was dropping some useless columns such as the name of the host or the date of the last review.\\
-Moreover there were some announcements with missing data for important fields, so we dropped those (they were only 20 out of 50000).\\
-Lastly there was the ``Reviews per month" attribute that was null in the case of 0 reviews on the announcement. Instead of dropping these, what we did was to fill the null values with 0 in the case o no reviews for the house.
+The given dataset was immediately almost ready to be used, as there were no duplicates and the attribute's types were coherenent and almost always not null.\\
+Even with this said some preprocessing was necessary, we began by dropping some useless columns such as the name of the host or the date of the last review. Moreover there were some announcements with missing data for important fields, so we dropped those (circa 20 out of 50000).\\
+Lastly there was the ``Reviews per month" attribute that was null in the case of 0 reviews on the announcement. Instead of dropping these, what we did was to fill the null values with 0 in the case of no reviews for the house.
 
 \subsection{PCA preprocessing}
-While what we said is enough for all the analyses that we ended up doing, evaluating PCA requires for more attention. This is due to the fact that the algorithm only accepts numerical values for the various fields, and our datasets instead has some categorical ones (i.e. ``neighbourhood" or ``housing\_type"). What we did was create some sort of one-hot encoding for those fields; for example ``housing\_type" could be: an entire apartment, a private room or a shared room, so we replaced the ``housing\_type" field with 3 new ones: ``housing\_type\_apt", ``housing\_type\_pvtroom" and ``housing\_type\_shroom", and the values are all 0 except for one which is 1. Doing the same for the rest of the categorical fields we finished the preprocessing for the PCA dataset.
+While what we said is enough for all the analyses that we ended up doing, evaluating PCA requires for more attention. This is due to the fact that the algorithm only accepts numerical values for the various fields, and our dataset instead has some categorical ones (i.e. ``neighbourhood" or ``housing\_type"). What we did was creating some sort of one-hot encoding for those fields; for example ``housing\_type" could be: an entire apartment, a private room or a shared room, so we replaced the ``housing\_type" field with 3 new ones: ``housing\_type\_apt", ``housing\_type\_pvtroom" and ``housing\_type\_shroom", and the values are all 0 except for one which is 1. Doing the same for the rest of the categorical fields we finished the preprocessing for the dataset for PCA.\\
 
-\section{Visualizations and Interaction design}
-qui tutte subsections, una per ciascun graph
+\section{Tools used}
+The code is mainly written in {\em Javascript} and {\em HTML}, although at the core of our analysis is {\em D3.js} \cite{D3}, a small, free javascript library for manipulating documents based on data. Instead of using the basic D3 functions we also utilised {\em PlotlyJS} \cite{PLOTLY}, a high-level, declarative charting library built on top of D3, which ships with lots of chart types.\\
+It also has to be stated that the preprocessing of the dataset was done in {\em Python} \cite{PYTHON} with the aid of {\em Pandas} \cite{PANDAS}, a fast, powerful, flexible and easy to use open source data analysis and manipulation tool, built on top of the Python programming language.\\
+Lastly to make things like HTML document traversal, manipulation and event handling much simpler we also used {\em jQuery} \cite{JQUERY} .
+
+\section{Visualizations}
+\subsection{Average neighbourhood price barchart}
+sia neigh group che singoli hood (specifica select per aggiungere/levare)
+\subsection{Amount of announcements per neighbourhood barchart}
+specifica che hai diviso per roomtypes con stacked barchart
+\subsection{Violin plot and barchart for pricing distribution across neighbourhoods}
+ricorda del bottone per switchare fra i 2
+\subsection{Word Cloud}
+utile per vedere parole chiave
+\subsection{Map Scatterplot with encoding for price and average income}
+specifica preprocessing per calcolare income mensile dell'announcement
+\subsection{PCA}
+mortacci sua, ricorda considerazioni su similitudini grazie a z-norm
+
+\section{Interaction design}
+Visualizing data is one thing, being able to interact with it is another. We wanted to make it possible for the user to be able to interact with all the graphs in our project, and the choice of using {\em PlotlyJS} surely helped in this regard. Thanks to it, all the graphs done using the library are: pannable, zoomable and selectable both with a box selection or a lasso selection tool; moreover the user is also able to reset the graph to its original view and download it as a png image.\\
+Even though this already makes a huge difference with respect to static data, we wanted something more. There are multiple scatterplots across the project (in the pricing distribution graph, on the map, and on the PCA representation) and we thought that it would have been interesting to make the selection in a across-project manner. This means that when the user selects some houses in one of these graph, the selection is carried across to all the others. This is especially useful to see how the clusters created by PCA are reflected in the actual pricing/position of the announcements, the images below show how clearly announcements are clustered taking into consideration both the price and the neighbourhood:\\
+images here\\
+Moreover we also made it possible to select all the houses in a certain neighbourhood by selecting it in one of the barcharts; also this selection is obviously carried across all the graphs in the project.
+
 \section{Future work}
-Robina su smart pricing
+While we are quite proud of the results that we were able to obtain with this project, one main thing that we have in mind and that for sure we will do but that is outside the scope of this exam is to create a ``intelligent pricing" algorithm.\\
+By this we mean a machine learning algorithm that is able, given the details of a new house, to estimate its optimal pricing, by taking into account similar announcements. We are quite confident that some powerful regressors like {\em Lasso} \cite{LASSO} or {\em Extreme Gradient Boosting} \cite{XGB} would be able to extract the most important features and assign weights to them, so that a new house's price could be accurately estimated. This could of course be extremely useful for someone that is willing to add an announcement to the site but is unsure about the best price to put it at.
 
 \section{TODO}
 \begin{itemize}
 \item Rimuovi TODO section lol
+\item Write Visualizations section
+\item Add images to Interaction design section
 \item Finalizza se hai usato tutto il dataset con node o se lo hai tagliato in sezione description of dataset
 \item prezzo per disponibiluita = income mensile
+\item selection across project
+\item fai ppt
+\item finalize layout
 \end{itemize}
 
 
@@ -87,6 +116,27 @@ Robina su smart pricing
 \bibitem{NYCDATASET}
 ``New York City AirBnB's dataset' \\
   \verb|https://www.kaggle.com/dgomonov/new-york-city-airbnb-open-data/|.
+\bibitem{D3}
+``Data-Driven Documents website' \\
+  \verb|https://d3js.org/|.
+\bibitem{PLOTLY}
+``PlotlyJS website' \\
+  \verb|https://plot.ly/javascript/|.
+\bibitem{PYTHON}
+``Python website' \\
+  \verb|https://www.python.org/|.
+\bibitem{PANDAS}
+``Pandas website' \\
+  \verb|https://pandas.pydata.org/|.
+\bibitem{JQUERY}
+``jQuery website' \\
+  \verb|https://jquery.com/|.
+\bibitem{LASSO}
+``Lasso regression explained' \\
+  \verb|https://en.wikipedia.org/wiki/Lasso_(statistics)|.
+\bibitem{XGB}
+``Extreme Gradient Boosting documentation' \\
+  \verb|https://xgboost.readthedocs.io/en/latest/|.
 \end{thebibliography}
 
 \end{document}
