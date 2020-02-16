@@ -1,3 +1,4 @@
+
 barChart_margin = {top: 20, right: 20, bottom: 30, left: 80};
 const barChartSvg = d3.select("#barchart_avgPrizePerZone").append("g").attr("transform", "translate(" + barChart_margin.left + "," + barChart_margin.top + ")");
 
@@ -11,6 +12,7 @@ Promise.all([d3.csv("./NYC_AirBnB_announcements_short.csv"), d3.csv("./NYC_AirBn
 
     var data = values[0];
     dataset = data.filter(d => d.price < 500);  //Remove outliers
+    createSearchSelectHoods(dataset);
     plotPricePerHoodChart(dataset);
     plotLocationScatterPlot(dataset);
     plotWordCloud(dataset);
@@ -69,8 +71,6 @@ function createPricePerHoodChart(el, dataByHood, data){
             var newData = data.filter( v => selection.includes(v.neighbourhood_group));
             plotLocationScatterPlot( newData, true )
         }
-
-
     };
     barChart.draw(g);
 }

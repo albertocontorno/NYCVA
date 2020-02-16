@@ -11,15 +11,40 @@
         <script src="./StackedBarchart.js"></script>
         <script src="./Violinplot.js"></script>
         <script src="PCAPlotter.js"></script>
+        <script src="./functions.js"></script>
         <script src="https://d3js.org/d3.v5.min.js"></script>
         <script src="https://cdn.plot.ly/plotly-latest.js"></script>
         <script src="https://cdn.jsdelivr.net/gh/holtzy/D3-graph-gallery@master/LIB/d3.layout.cloud.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/pca-js@1.0.0/pca.js"></script>
+        <script
+            src="https://code.jquery.com/jquery-3.4.1.min.js"
+            integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+            crossorigin="anonymous"></script>
+        <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
+        <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
         <title>Document</title>
         <style>
             .chart_label{
                 text-align: center;
                 font-weight: bold
+            }
+
+            button{
+                background-color: dodgerblue;
+                padding: 5px;
+                border-radius: 3px;
+                border: 1px solid;
+                cursor: pointer;
+                font-weight: bold;
+                margin: 2px;
+            }
+
+            button:hover{
+                background-color: rgb(11, 126, 241);
+            }
+            
+            button:active{
+                background-color: rgb(9, 108, 206);
             }
 
             .hide{
@@ -82,10 +107,18 @@
                 <div id="scatter_pca_container" style="height: 750px"></div>
                 <div class="chart_label">Scatter plot of PCA</div>
             </div>
-            <div class="col-xs"></div>
-        </div>
-        <div class="row"></div>
+            <div class="col-xs" id="price_hood_container">
+                <p id="price_hood_select">
+                    <label for="hoods_select" style="margin-top: 13px; display: inline-block;">Select neighbourhoods:</label> 
+                    <button id="price_hood_top5" style="float: right">Select top 5</button>
+                    <select id="hoods_select" name="values[]" multiple="multiple"></select>
+                </p>
+                <div>
+                    <div id="price_hood_selected"></div>
 
+                </div>
+            </div>
+        </div>
 
         <script src="./main.js"></script>
     </body>
