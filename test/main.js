@@ -13,6 +13,10 @@ Promise.all([d3.csv("./NYC_AirBnB_announcements_short.csv"), d3.csv("./NYC_AirBn
 
     var data = values[0];
     dataset = data.filter(d => d.price < 500);  //Remove outliers
+
+    evaluateEstMonthlyIncome(dataset);
+    console.log(dataset[0]);
+
     plotPricePerHoodChart(dataset);
     plotLocationScatterPlot(dataset);
     plotWordCloud(dataset);
@@ -241,4 +245,12 @@ function plotViolinplot(data){
 function plotStackedplot(data){
     var stackedplot = new StackedBarchart(data, 'price', '', 'neighbourhood_group', 'room_type');
     stackedplot.draw('room_types');
+}
+
+function evaluateEstMonthlyIncome(pcaDataset) {
+    pcaDataset.forEach(getHouseMonthlyIncome);
+
+    function getHouseMonthlyIncome(item, index) {
+        pcaDataset[index].monthlyincome = (item.price * (365 - item.availability_365))/12;
+    }
 }
