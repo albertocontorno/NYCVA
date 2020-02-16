@@ -32,23 +32,54 @@ function createSearchSelectHoods(data){
     const config = {responsive: true};
 
     var dataByHood = d3.nest()
-                .key(function(d) { return d['neighbourhood'] } )
-                .rollup(function(v) { return d3.mean(v, (el) => el["price"]) })
+                .key(function(d) { return d['neighbourhood'] } )   
+                .rollup(function(v) { return  {price: d3.mean(v, (el) => el['price'] ), group: v[0].neighbourhood_group}; })
                 .entries(data);
                 
     console.log(dataByHood)
-    dataByHood.sort( (a,b)=> b["value"] - a["value"]);
+    dataByHood.sort( (a,b)=> b['value']['price'] - a['value']['price']);
 
     $(document).ready(function() {
         select.select2({ width: '100%' });
+
+        var eventFromButton = {};
+
+        const btn_top5 = $('#price_hood_top5');
+        const btn_manhattan = $('#price_hood_manhattan');
+        const btn_brooklyn = $('#price_hood_brooklyn')
+        const btn_queens = $('#price_hood_queens')
+        const btn_hood_si = $('#price_hood_si')
+        const btn_hood_bronx = $('#price_hood_bronx')
+        const buttons = [btn_top5, btn_manhattan, btn_brooklyn, btn_queens, btn_hood_si, btn_hood_bronx];
+        
+        btn_top5.click(selectTop5.bind(null, btn_top5, buttons, select, dataByHood, eventFromButton));
+        btn_manhattan.click(selectHoodGroup.bind(null, btn_manhattan, buttons, select, dataByHood, 'Manhattan', eventFromButton));
+        btn_brooklyn.click(selectHoodGroup.bind(null, btn_brooklyn, buttons, select, dataByHood, 'Brooklyn', eventFromButton));
+        btn_queens.click(selectHoodGroup.bind(null, btn_queens, buttons, select, dataByHood, 'Queens', eventFromButton));
+        btn_hood_si.click(selectHoodGroup.bind(null, btn_hood_si, buttons, select, dataByHood, 'Staten Island', eventFromButton));
+        btn_hood_bronx.click(selectHoodGroup.bind(null, btn_hood_bronx, buttons, select, dataByHood, 'Bronx', eventFromButton));
+
+        eventFromButton['btns'] = buttons;
+        eventFromButton.new = false;
+        eventFromButton.el = null;
+
         select.on('change.select2', e => {
+            if(eventFromButton.new){
+                eventFromButton.btns.forEach( b => b.removeClass('selected'));
+                eventFromButton.el.addClass('selected');
+            } else {
+                buttons.forEach( b => b.removeClass('selected'));
+            }
+            eventFromButton.new = null;
+
             var selectedHoods = select.select2('data').map( v => v.id );
             dataByHoodFiltered = dataByHood.filter( v => selectedHoods.includes(v.key));
+
             var plotData = [
                 {
-                  x: dataByHoodFiltered.map( v => v.value ),
+                  x: dataByHoodFiltered.map( v => v.value.price ),
                   y: dataByHoodFiltered.map( v => v.key ),
-                  text: dataByHoodFiltered.map( v => parseFloat(v.value).toFixed(2) + ' $' ),
+                  text: dataByHoodFiltered.map( v => parseFloat(v.value.price).toFixed(2) + ' $' ),
                   hoverinfo: 'none',
                   textposition: 'outside',
                   orientation: 'h',
@@ -65,19 +96,43 @@ function createSearchSelectHoods(data){
 
             Plotly.react('price_hood_selected', plotData, layout, config);
         });
-        selectTop5(select, dataByHood);
-        $('#price_hood_top5').click(selectTop5.bind(null, select, dataByHood));
+        
+        selectTop5(btn_top5, buttons, select, dataByHood, eventFromButton);
     });
 }
 
-function selectTop5(select, dataByHood){
+function selectTop5(el, btns, select, dataByHood, eventFromButton){
     const top5 = dataByHood.slice(0, 5).map(v => v.key);
-    console.log("TOP5", top5)
+    eventFromButton.el = el;
+    eventFromButton.new = true;
+    /* btns.forEach( b => b.removeClass('selected'));
+    el.addClass('selected'); */
     select.val(null);
     select.val(top5).trigger('change');
 }
 
+function selectHoodGroup(el, btns, select, dataByHood, name, eventFromButton){
+    const hoods = []
+    /* btns.forEach( b => b.removeClass('selected'));
+    el.addClass('selected'); */
+    eventFromButton.el = el;
+    eventFromButton.new = true;;
+    dataByHood.map(v => {
+        if(v.value.group === name){
+            return hoods.push(v.key)
+        }
+    });
+    select.val(null);
+    select.val(hoods).trigger('change');
+}
 
+function triggerChange(fromButton = true){
+    if(!fromButton){
+
+    }
+}
+
+// MAP
 function plotLocationScatterPlot(data, update = false) {
 
     const color_scale = d3.scaleQuantile().domain([0, 500]).range(["#440154", "#482878", "#3e4989", "#31688e", "#26828e", "#1f9e89", "#35b779", "#6ece58", "#b5de2b", "#fde725"].reverse());
