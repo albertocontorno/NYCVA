@@ -8,11 +8,17 @@ const scatterPlotSvg = d3.select("#location_scatter_plot").append("g").attr("tra
 var dataset;
 var pcaDataset;
 
+var pca;
+
 Promise.all([d3.csv("./NYC_AirBnB_announcements_short.csv"), d3.csv("./NYC_AirBnB_announcements_short_PCA.csv")]).then( values => {
 
     var data = values[0];
     dataset = data.filter(d => d.price < 500);  //Remove outliers
     createSearchSelectHoods(dataset);
+
+    evaluateEstMonthlyIncome(dataset);
+    console.log(dataset[0]);
+
     plotPricePerHoodChart(dataset);
     plotLocationScatterPlot(dataset);
     plotWordCloud(dataset);
@@ -23,7 +29,8 @@ Promise.all([d3.csv("./NYC_AirBnB_announcements_short.csv"), d3.csv("./NYC_AirBn
 
     var pcaData = values[1];
     pcaDataset = pcaData.filter(d => d.price < 500); //Remove outliers
-    initAndPlotPCA(pcaDataset);
+    pca = new PCAPlotter(pcaDataset);
+    initAndPlotPCA();
 });
 
 function plotPricePerHoodChart(data) {
@@ -154,8 +161,22 @@ function plotLocationScatterPlot(data, update = false) {
         var config = {responsive: true, mapboxAccessToken: 'pk.eyJ1IjoiY2hyaWRkeXAiLCJhIjoiY2lxMnVvdm5iMDA4dnhsbTQ5aHJzcGs0MyJ9.X9o_rzNLNesDxdra4neC_A'};
         plot = Plotly.newPlot(graphDiv, plotData, plotLayout, config);
         graphDiv.on('plotly_selected', function(eventData) {
+            if(!eventData) {eventData = {}; eventData.points = []}
             console.log(eventData.points);
-            console.log(data[eventData.points[0].pointIndex], eventData.points[0].pointIndex)
+            //console.log(data[eventData.points[0].pointIndex], eventData.points[0].pointIndex);
+
+            var colors = [];
+            for(var i = 0; i < dataset.length; i++) colors.push(dataset[i]['price']); //Starting color
+
+            eventData.points.forEach(function(pt) {
+                colors[pt.pointNumber] = '#941a20'; // Select color
+            });
+
+            Plotly.restyle(graphDiv, {selectedpoints: [null]}, [0]);
+            Plotly.restyle(graphDiv, 'marker.color', [colors], [0]);
+
+            pca.plotPCAScatterPlot(eventData, true);
+
         });
     }
 }
@@ -165,9 +186,8 @@ function plotWordCloud(data){
     wordCloud.plotWordCloud();
 }
 
-function initAndPlotPCA(data){
-    const pca = new PCAPlotter(data);
-    
+function initAndPlotPCA(){
+
     pca.callback = (eventData) => {
 
         var updatedData = [];
@@ -225,4 +245,12 @@ function plotViolinplot(data){
 function plotStackedplot(data){
     var stackedplot = new StackedBarchart(data, 'price', '', 'neighbourhood_group', 'room_type');
     stackedplot.draw('room_types');
+}
+
+function evaluateEstMonthlyIncome(pcaDataset) {
+    pcaDataset.forEach(getHouseMonthlyIncome);
+
+    function getHouseMonthlyIncome(item, index) {
+        pcaDataset[index].monthlyincome = (item.price * (365 - item.availability_365))/12;
+    }
 }
