@@ -14,13 +14,13 @@ Promise.all([d3.csv("./NYC_AirBnB_announcements_short.csv"), d3.csv("./NYC_AirBn
 
     var data = values[0];
     dataset = data.filter(d => d.price < 500);  //Remove outliers
-    createSearchSelectHoods(dataset);
 
     evaluateEstMonthlyIncome(dataset);
     console.log(dataset[0]);
 
     plotPricePerHoodChart(dataset);
     plotLocationScatterPlot(dataset);
+    createSearchSelectHoods(dataset);
     plotWordCloud(dataset);
     plotBoxplot(dataset);
     plotViolinplot(dataset);

@@ -40,16 +40,17 @@ function createSearchSelectHoods(data){
     dataByHood.sort( (a,b)=> b['value']['price'] - a['value']['price']);
 
     $(document).ready(function() {
+        var graphDiv = document.getElementById('price_hood_selected')
         select.select2({ width: '100%' });
 
         var eventFromButton = {};
 
         const btn_top5 = $('#price_hood_top5');
         const btn_manhattan = $('#price_hood_manhattan');
-        const btn_brooklyn = $('#price_hood_brooklyn')
-        const btn_queens = $('#price_hood_queens')
-        const btn_hood_si = $('#price_hood_si')
-        const btn_hood_bronx = $('#price_hood_bronx')
+        const btn_brooklyn = $('#price_hood_brooklyn');
+        const btn_queens = $('#price_hood_queens');
+        const btn_hood_si = $('#price_hood_si');
+        const btn_hood_bronx = $('#price_hood_bronx');
         const buttons = [btn_top5, btn_manhattan, btn_brooklyn, btn_queens, btn_hood_si, btn_hood_bronx];
         
         btn_top5.click(selectTop5.bind(null, btn_top5, buttons, select, dataByHood, eventFromButton));
@@ -62,12 +63,13 @@ function createSearchSelectHoods(data){
         eventFromButton['btns'] = buttons;
         eventFromButton.new = false;
         eventFromButton.el = null;
-
+        var firstTime = true;
         select.on('change.select2', e => {
             if(eventFromButton.new){
                 eventFromButton.btns.forEach( b => b.removeClass('selected'));
                 eventFromButton.el.addClass('selected');
             } else {
+                
                 buttons.forEach( b => b.removeClass('selected'));
             }
             eventFromButton.new = null;
@@ -91,13 +93,39 @@ function createSearchSelectHoods(data){
                         width: 1
                     }
                   }
-                },
+                }
             ];
 
-            Plotly.react('price_hood_selected', plotData, layout, config);
+            Plotly.react(graphDiv, plotData, layout, config);
+            if(!firstTime) plotLocationScatterPlot([], true);
+            firstTime = false;
         });
-        
+
         selectTop5(btn_top5, buttons, select, dataByHood, eventFromButton);
+
+        graphDiv.on('plotly_selected', function(eventData) {
+            if(!eventData) {eventData = {}; eventData.points = []}
+            console.log(eventData.points)
+            let selectedDataPoints = [];
+            eventData.points.forEach( hood => {
+                let hoodName = hood.y;
+                selectedDataPoints.push(...data.filter( v => v['neighbourhood'] === hoodName));
+            });
+
+            var colors = [];
+            for(var i = 0; i < dataByHoodFiltered.length; i++) colors.push('#1f77b4'); //Starting color
+
+            eventData.points.forEach(function(pt) {
+                colors[pt.pointNumber] = '#941a20'; // Select color
+            });
+
+            Plotly.restyle(graphDiv, {selectedpoints: [null]}, [0]);
+            Plotly.restyle(graphDiv, 'marker.color', [colors], [0]);
+
+            plotLocationScatterPlot(selectedDataPoints, true);
+        });
+
+        
     });
 }
 
@@ -105,18 +133,14 @@ function selectTop5(el, btns, select, dataByHood, eventFromButton){
     const top5 = dataByHood.slice(0, 5).map(v => v.key);
     eventFromButton.el = el;
     eventFromButton.new = true;
-    /* btns.forEach( b => b.removeClass('selected'));
-    el.addClass('selected'); */
     select.val(null);
     select.val(top5).trigger('change');
 }
 
 function selectHoodGroup(el, btns, select, dataByHood, name, eventFromButton){
     const hoods = []
-    /* btns.forEach( b => b.removeClass('selected'));
-    el.addClass('selected'); */
     eventFromButton.el = el;
-    eventFromButton.new = true;;
+    eventFromButton.new = true;
     dataByHood.map(v => {
         if(v.value.group === name){
             return hoods.push(v.key)
@@ -203,7 +227,7 @@ function plotLocationScatterPlot(data, update = false) {
         Plotly.restyle(graphDiv, 'marker.color', [colors], [0]);
     } else {
         var config = {responsive: true, mapboxAccessToken: 'pk.eyJ1IjoiY2hyaWRkeXAiLCJhIjoiY2lxMnVvdm5iMDA4dnhsbTQ5aHJzcGs0MyJ9.X9o_rzNLNesDxdra4neC_A'};
-        plot = Plotly.newPlot(graphDiv, plotData, plotLayout, config);
+        Plotly.newPlot(graphDiv, plotData, plotLayout, config);
         graphDiv.on('plotly_selected', function(eventData) {
             if(!eventData) {eventData = {}; eventData.points = []}
             console.log(eventData.points);
