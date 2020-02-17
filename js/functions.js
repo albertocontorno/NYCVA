@@ -4,7 +4,7 @@ function createSearchSelectHoods(data){
     let hoods = d3.nest()
         .key(function(d) { return d['neighbourhood_group']; })
         .key(function(d) { return d['neighbourhood']; })
-        .entries(data)
+        .entries(data);
 
     hoods.forEach( group => {
         let groupElement = $(`<optgroup label="${group.key}"></optgroup>`);
@@ -97,7 +97,7 @@ function createSearchSelectHoods(data){
             ];
 
             Plotly.react(graphDiv, plotData, layout, config);
-            if(!firstTime) plotLocationScatterPlot([], true);
+            if(!firstTime) plotLocationScatterPlot([], true, showIncome);
             firstTime = false;
         });
 
@@ -122,7 +122,7 @@ function createSearchSelectHoods(data){
             Plotly.restyle(graphDiv, {selectedpoints: [null]}, [0]);
             Plotly.restyle(graphDiv, 'marker.color', [colors], [0]);
 
-            plotLocationScatterPlot(selectedDataPoints, true);
+            plotLocationScatterPlot(selectedDataPoints, true, showIncome);
         });
 
         
@@ -157,9 +157,28 @@ function triggerChange(fromButton = true){
 }
 
 // MAP
-function plotLocationScatterPlot(data, update = false) {
+function plotLocationScatterPlot(data, update = false, income) {
 
-    const color_scale = d3.scaleQuantile().domain([0, 500]).range(["#440154", "#482878", "#3e4989", "#31688e", "#26828e", "#1f9e89", "#35b779", "#6ece58", "#b5de2b", "#fde725"].reverse());
+    document.getElementById('map_btn').onclick = e => {
+        document.getElementById('map_btn').classList.toggle('showIncome');
+
+        if(document.getElementById('map_btn').classList.contains('showIncome')){
+            document.getElementById('map_btn').innerText = 'Show encoding by price';
+            showIncome = !showIncome;
+            plotLocationScatterPlot(data, false, income);
+        } else {
+            document.getElementById('map_btn').innerText = 'Show encoding by monthly income';
+            showIncome = !showIncome;
+            plotLocationScatterPlot(data, false, income);
+        }
+    };
+
+    let color_scale;
+    if (showIncome) {
+        color_scale = d3.scaleQuantile().domain([0, 7500]).range(["#440154", "#482878", "#3e4989", "#31688e", "#26828e", "#1f9e89", "#35b779", "#6ece58", "#b5de2b", "#fde725"].reverse());
+    } else {
+        color_scale = d3.scaleQuantile().domain([0, 500]).range(["#440154", "#482878", "#3e4989", "#31688e", "#26828e", "#1f9e89", "#35b779", "#6ece58", "#b5de2b", "#fde725"].reverse());
+    }
 
     function unpackColor(rows, key){
         return rows.map(function(row) {
@@ -178,32 +197,62 @@ function plotLocationScatterPlot(data, update = false) {
     [0.8888888888888888, "#b5de2b"],
     [1, "#fde725"]];
 
-    var plotData = [
-        {
-            type: "scattermapbox",
-            text: unpack(dataset, "name"),
-            lon: unpack(dataset, "longitude"),
-            lat: unpack(dataset, "latitude"),
-            customdata: unpack(dataset, "price"),
-            marker: {
-                color: unpackColor(dataset, 'price'),//unpack(dataset, 'price'), 
-                cmax: 500, 
-                cmin: 0,
-                colorscale: scl,
-                reversescale: true,
-                size: 6,
-                showscale: true,
-                colorbar:{
-                    thickness: 15,
-                    ticksuffix: ' $',
-                    ticks: 'outside',
-                    ticklen: 5,
-                }
-            },
-            hoverlabel: {namelength: 0},
-            hovertemplate: "<b>Price</b>: %{customdata}  $ <br>%{text}"
-        }
-    ];
+    let plotData;
+    if (showIncome) {
+        plotData = [
+            {
+                type: "scattermapbox",
+                text: unpack(dataset, "name"),
+                lon: unpack(dataset, "longitude"),
+                lat: unpack(dataset, "latitude"),
+                customdata: unpack(dataset, "monthlyincome"),
+                marker: {
+                    color: unpackColor(dataset, 'monthlyincome'),//unpack(dataset, 'price'),
+                    cmax: 7500,
+                    cmin: 0,
+                    colorscale: scl,
+                    reversescale: true,
+                    size: 6,
+                    showscale: true,
+                    colorbar:{
+                        thickness: 15,
+                        ticksuffix: ' $',
+                        ticks: 'outside',
+                        ticklen: 5,
+                    }
+                },
+                hoverlabel: {namelength: 0},
+                hovertemplate: "<b>Monthly income</b>: %{customdata}  $ <br>%{text}"
+            }
+        ];
+    } else {
+        plotData = [
+            {
+                type: "scattermapbox",
+                text: unpack(dataset, "name"),
+                lon: unpack(dataset, "longitude"),
+                lat: unpack(dataset, "latitude"),
+                customdata: unpack(dataset, "price"),
+                marker: {
+                    color: unpackColor(dataset, 'price'),//unpack(dataset, 'price'),
+                    cmax: 500,
+                    cmin: 0,
+                    colorscale: scl,
+                    reversescale: true,
+                    size: 6,
+                    showscale: true,
+                    colorbar:{
+                        thickness: 15,
+                        ticksuffix: ' $',
+                        ticks: 'outside',
+                        ticklen: 5,
+                    }
+                },
+                hoverlabel: {namelength: 0},
+                hovertemplate: "<b>Price</b>: %{customdata}  $ <br>%{text}"
+            }
+        ];
+    }
 
     var plotLayout = {
         dragmode: "zoom",
@@ -215,7 +264,13 @@ function plotLocationScatterPlot(data, update = false) {
     
     if(update){
         var colors = [];
-        for(var i = 0; i < dataset.length; i++) colors.push(dataset[i]['price']); //Starting color
+
+        let i=0;
+        if (showIncome) {
+            for(i; i < dataset.length; i++) colors.push(dataset[i]['monthlyincome']); //Starting color
+        } else {
+            for(i; i < dataset.length; i++) colors.push(dataset[i]['price']); //Starting color
+        }
 
         data.forEach(function(pt) {
             const index = dataset.findIndex( v => v == pt );
@@ -234,7 +289,12 @@ function plotLocationScatterPlot(data, update = false) {
             //console.log(data[eventData.points[0].pointIndex], eventData.points[0].pointIndex);
 
             var colors = [];
-            for(var i = 0; i < dataset.length; i++) colors.push(dataset[i]['price']); //Starting color
+            let i=0;
+            if (showIncome) {
+                for(i; i < dataset.length; i++) colors.push(dataset[i]['monthlyincome']); //Starting color
+            } else {
+                for(i; i < dataset.length; i++) colors.push(dataset[i]['price']); //Starting color
+            }
 
             eventData.points.forEach(function(pt) {
                 colors[pt.pointNumber] = '#941a20'; // Select color

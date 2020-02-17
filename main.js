@@ -10,6 +10,8 @@ var pcaDataset;
 
 var pca;
 
+var showIncome = false;
+
 Promise.all([d3.csv("./assets/NYC_AirBnB_announcements_short.csv"), d3.csv("./assets/NYC_AirBnB_announcements_short_PCA.csv")]).then( values => {
 
     var data = values[0];
@@ -19,7 +21,7 @@ Promise.all([d3.csv("./assets/NYC_AirBnB_announcements_short.csv"), d3.csv("./as
     console.log(dataset[0]);
 
     plotPricePerHoodChart(dataset);
-    plotLocationScatterPlot(dataset);
+    plotLocationScatterPlot(dataset, showIncome);
     createSearchSelectHoods(dataset);
     plotWordCloud(dataset);
     plotBoxplot(dataset);
@@ -73,10 +75,10 @@ function createPricePerHoodChart(el, dataByHood, data){
     barChart.enableSelectionFn = (data_) => {
         var selection = data_.filter( v => v.selected ).map( v => v.key);
         if(selection.length <= 0){
-            plotLocationScatterPlot( data, true )
+            plotLocationScatterPlot( data, true, showIncome )
         } else {
             var newData = data.filter( v => selection.includes(v.neighbourhood_group));
-            plotLocationScatterPlot( newData, true )
+            plotLocationScatterPlot( newData, true, showIncome )
         }
     };
     barChart.draw(g);
@@ -108,7 +110,7 @@ function initAndPlotPCA(){
                 updatedData.push(point)
             }
         });
-        plotLocationScatterPlot(updatedData, true);
+        plotLocationScatterPlot(updatedData, true, showIncome);
 
     };
     pca.initPlotter();
