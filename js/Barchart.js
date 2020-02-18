@@ -1,5 +1,5 @@
 class Barchart{
-
+    id;
     barClass = '.bar';
     labelClass = '.bar_label';
     x_scale = null;
@@ -18,8 +18,10 @@ class Barchart{
     data = [];
     labelFn = null;
     enableSelection = true;
+    bars;
     enableSelectionFn = (data) => {};
-    constructor(data, w, h, x_axis, y_axis, x_scale, y_scale ){
+    constructor(id, data, w, h, x_axis, y_axis, x_scale, y_scale){
+        this.id = id;
         this.data = data;
         this.width = w;
         this.height = h;
@@ -41,7 +43,7 @@ class Barchart{
         g.append("g")
             .call(self.y_axis);
 
-        let bars = g.selectAll(self.barClass)
+        self.bars = g.selectAll(self.barClass)
             .data(self.data)
             .enter()
             .append("rect")
@@ -71,7 +73,7 @@ class Barchart{
 
 
         if(self.enableSelection){
-            bars.on('click', function(d, i){
+            self.bars.on('click', function(d, i){
                 if(!d["selected"]){
                     d["selected"] = true;
                     d3.select(this).attr("fill", 'green')
@@ -95,5 +97,11 @@ class Barchart{
             .attr("fill", self.fontColor)
             .attr("x", function(d) { return self.x_scale(d["value"]) - 5; })
             .attr("y", function(d, i) {return self.y_scale(d["key"]) + (self.y_scale.bandwidth() / 2) + 5});
+    }
+
+    deselect(){
+        const self = this;
+        this.data.forEach( d => d['selected'] = false );
+        this.bars._groups[0].forEach( d => d3.select(d).attr("fill", self.barColor) );
     }
 }

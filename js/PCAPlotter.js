@@ -1,9 +1,9 @@
 class PCAPlotter {
 
-    callback = null;
     data = [];
     adjustedData = [];
-
+    PCADiv;
+    
     constructor(data){
         this.data = data;
     }
@@ -39,14 +39,14 @@ class PCAPlotter {
         self.adjustedData = PCA.computeAdjustedData(normalizedData,vectors[0], vectors[1]);
         console.log(self.adjustedData);
 
-        self.plotPCAScatterPlot(self.adjustedData, false, self.callback)
+        self.plotPCAScatterPlot(self.adjustedData, false)
 
     }
 
 
-    plotPCAScatterPlot(data, update, callback) {
+    plotPCAScatterPlot(data, update) {
 
-        var PCADiv = document.getElementById('scatter_pca_container');
+        this.PCADiv = document.getElementById('scatter_pca_container');
         var config = {responsive: true};
 
         if (update) {
@@ -58,7 +58,7 @@ class PCAPlotter {
                 colors[pt.pointIndex] = '#941a20'; // Select color
             });
 
-            Plotly.restyle(PCADiv, 'marker.color', [colors], [0]);
+            Plotly.restyle(this.PCADiv, 'marker.color', [colors], [0]);
 
         } else {
             var trace1 = {
@@ -70,26 +70,29 @@ class PCAPlotter {
 
             var dataToPlot = [trace1];
 
-            Plotly.newPlot(PCADiv, dataToPlot, null, config);
+            Plotly.newPlot(this.PCADiv, dataToPlot, null, config);
 
-            PCADiv.on('plotly_selected', function(eventData) {
+            this.PCADiv.on('plotly_selected', (eventData) => {
                 if(!eventData) {eventData = {}; eventData.points = []}
-                console.log(eventData.points);
-
-                var colors = [];
-                for(var i = 0; i < data.adjustedData[0].length; i++) colors.push('#1f77b4'); //Starting color
-
+                selectedPointsDataset.length = 0; //empty the array
                 eventData.points.forEach(function(pt) {
-                    colors[pt.pointNumber] = '#941a20'; // Select color
+                    selectedPointsDataset.push(pt.pointNumber);
                 });
 
-                Plotly.restyle(PCADiv, {selectedpoints: [null]}, [0]);
-                Plotly.restyle(PCADiv, 'marker.color', [colors], [0]);
-
-                callback(eventData);
-
+                updateCharts();
             });
         }
+    }
+
+    update(){
+        var colors = [];
+        for(var i = 0; i < this.adjustedData.adjustedData[0].length; i++) colors.push('#1f77b4'); //Starting color
+    
+        selectedPointsDataset.forEach(function(pt) {
+            colors[pt] = '#941a20'; // Select color
+        });
+
+        Plotly.restyle(this.PCADiv, 'marker.color', [colors], [0]);
     }
 }
 

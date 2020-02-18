@@ -8,9 +8,18 @@ const scatterPlotSvg = d3.select("#location_scatter_plot").append("g").attr("tra
 var dataset;
 var pcaDataset;
 
-var pca;
+var selectedPointsDataset = [];
+var chartsToUpdate = [];
+var selectedPointsPca = [];
 
-var showIncome = false;
+var pca;
+var pricePerHoodBarchart, pricePerHoodSelectBarchart, boxplot;
+
+const constants = {
+    PRICE_PER_HOOD_BARCHART: 'PRICE_PER_HOOD_BARCHART',
+    PRICE_PER_MICRO_HOOD_BARCHART: 'PRICE_PER_MICRO_HOOD_BARCHART',
+    BOXPLOT_PRICE_DISTRIBUTIONS: 'BOXPLOT_PRICE_DISTRIBUTIONS'
+};
 
 Promise.all([d3.csv("./assets/NYC_AirBnB_announcements_short.csv"), d3.csv("./assets/NYC_AirBnB_announcements_short_PCA.csv")]).then( values => {
 
@@ -21,18 +30,13 @@ Promise.all([d3.csv("./assets/NYC_AirBnB_announcements_short.csv"), d3.csv("./as
     console.log(dataset[0]);
 
     plotPricePerHoodChart(dataset);
-    plotLocationScatterPlot(dataset, showIncome);
+    drawMap(dataset);
     createSearchSelectHoods(dataset);
     plotWordCloud(dataset);
     plotBoxplot(dataset);
     plotViolinplot(dataset);
     plotStackedplot(dataset);
-    
-
-    var pcaData = values[1];
-    pcaDataset = pcaData.filter(d => d.price < 500); //Remove outliers
-    pca = new PCAPlotter(pcaDataset);
-    initAndPlotPCA();
+    initAndPlotPCA(values[1]);
 });
 
 function plotPricePerHoodChart(data) {
@@ -68,18 +72,18 @@ function createPricePerHoodChart(el, dataByHood, data){
 
 
     const y_axis = d3.axisLeft(y_scale);
-    let barChart = new Barchart(dataByHood, width, height, x_axis, y_axis, x_scale, y_scale);
+    let barChart = new Barchart(constants.PRICE_PER_HOOD_BARCHART, dataByHood, width, height, x_axis, y_axis, x_scale, y_scale);
+    pricePerHoodBarchart = barChart;
     barChart.dataValueAccessorFn = d => d["value"];
     barChart.dataLabelAccessorFn = d => d["value"];
     barChart.labelFn = d => "$" + Math.fround( d["value"]).toFixed(2);
     barChart.enableSelectionFn = (data_) => {
         var selection = data_.filter( v => v.selected ).map( v => v.key);
-        if(selection.length <= 0){
-            plotLocationScatterPlot( data, true, showIncome )
-        } else {
-            var newData = data.filter( v => selection.includes(v.neighbourhood_group));
-            plotLocationScatterPlot( newData, true, showIncome )
-        }
+        selectedPointsDataset.length = 0; //empty the array
+        dataset.forEach( (v,i) => {
+            if(selection.includes(v.neighbourhood_group)){ selectedPointsDataset.push(i); }
+        });
+        updateCharts(barChart.id);
     };
     barChart.draw(g);
 }
@@ -97,27 +101,15 @@ function plotWordCloud(data){
     wordCloud.plotWordCloud();
 }
 
-function initAndPlotPCA(){
-
-    pca.callback = (eventData) => {
-
-        var updatedData = [];
-        eventData.points.forEach(v => {
-            const point = dataset[v.pointIndex];
-            if(point == null){
-                console.log("ERRORE NULL")
-            } else {
-                updatedData.push(point)
-            }
-        });
-        plotLocationScatterPlot(updatedData, true, showIncome);
-
-    };
+function initAndPlotPCA(pcaData){
+    pcaDataset = pcaData.filter(d => d.price < 500); //Remove outliers
+    pca = new PCAPlotter(pcaDataset);
     pca.initPlotter();
 }
 
 function plotBoxplot(data){
-    const boxplot = new Boxplot(data, 'price', '', true, 'neighbourhood_group');
+    boxplot = new Boxplot(constants.BOXPLOT_PRICE_DISTRIBUTIONS, data, 'price', '', true, 'neighbourhood_group');
+    chartsToUpdate.push(boxplot);
     boxplot.draw('boxplot');
     boxplot.drawGrouped('boxplot_grouped');
     document.getElementById('boxplot_grouped').classList.toggle('hide');
@@ -163,5 +155,30 @@ function evaluateEstMonthlyIncome(pcaDataset) {
 
     function getHouseMonthlyIncome(item, index) {
         pcaDataset[index].monthlyincome = (item.price * (365 - item.availability_365))/12;
+    }
+}
+
+function drawMap(){
+    const map = new MapChart(dataset);
+    chartsToUpdate.push(map);
+    map.draw('scatter_map_container');
+}
+
+function createSearchSelectHoods(dataset){
+    pricePerHoodSelectBarchart = new BarchartSelect(constants.PRICE_PER_MICRO_HOOD_BARCHART, dataset);
+    pricePerHoodSelectBarchart.draw();
+        
+}
+
+function updateCharts(source = 'none'){
+    chartsToUpdate.forEach(chart => {
+        chart.update();
+    });
+    pca.update();
+    if(source != constants.PRICE_PER_HOOD_BARCHART){
+        pricePerHoodBarchart.deselect();
+    }
+    if(source != constants.PRICE_PER_MICRO_HOOD_BARCHART){
+        pricePerHoodSelectBarchart.deselect();
     }
 }
