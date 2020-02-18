@@ -7,7 +7,13 @@ class Violinplot{
     groupKey = 'neighbourhood_group';
     groupSubKey = 'room_type';
     valueKey = 'name';
-
+    boxPlotColors = [
+        '#1f77b4',  //muted blue
+        '#fc8d59',  //safety orange
+        '#2ca02c',  //cooked asparagus green
+        '#17becf',  //light blue
+        '#9467bd'   //muted purple
+    ]
     constructor(data, valueKey, boxTitle, multiple, groupKey){
         this.data = data; //[{nameKey: 'we', data:[]}]
         this.boxTitle = boxTitle;
@@ -34,6 +40,9 @@ class Violinplot{
                     showlegend: false,
                     type: 'violin',
                     name: el['key'],
+                    marker: {
+                        color: self.boxPlotColors[index]
+                    },
                     box: {
                         visible: true
                       },
@@ -75,6 +84,9 @@ class Violinplot{
                 showlegend: true,
                 type: 'violin',
                 name: el['key'],
+                marker: {
+                    color: self.boxPlotColors[index]
+                },
                 box: {
                     visible: true
                   },

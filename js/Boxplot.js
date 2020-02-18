@@ -12,8 +12,17 @@ class Boxplot{
     graphDivGrouped;
     indexToRealIndex = {};
     realIndexToIndex = {};
+    indexToRealIndexGrouped = {};
+    realIndexToIndexGrouped = {};
     traces = [];
     tracesGrouped = [];
+    boxPlotColors = [
+        '#1f77b4',  //muted blue
+        '#fc8d59',  //safety orange
+        '#2ca02c',  //cooked asparagus green
+        '#17becf',  //light blue
+        '#9467bd'   //muted purple
+    ]
     constructor(id, data, valueKey, boxTitle, multiple, groupKey){
         this.id = id;
         this.data = data; //[{nameKey: 'we', data:[]}]
@@ -33,7 +42,6 @@ class Boxplot{
             self.dataGrouped = d3.nest()
                 .key(function(d) { return d[self.groupKey]; })
                 .rollup(function(v) { 
-                        console.log()
                         let key = v[0][self.groupKey];
                         self.indexToRealIndex[key] = {}; 
                         self.realIndexToIndex[key] = {};
@@ -46,7 +54,6 @@ class Boxplot{
                 })
                 .entries(self.data);
 
-            console.log(self.dataGrouped);
             self.dataGrouped.forEach( (el, index) => {
                 var trace = {
                     y: el['value'],
@@ -54,9 +61,12 @@ class Boxplot{
                     showlegend: false,
                     type: 'box',
                     name: el['key'],
+                    marker: {
+                        color: self.boxPlotColors[index]
+                    },
                     selected: {
                         marker: {
-                          color: 'red',
+                          color: '#941a20',
                           opacity: 1
                         }
                     },
@@ -64,12 +74,11 @@ class Boxplot{
                         marker: {
                           opacity: 1
                         }
-                    },
-                    //marker: { color: 'purple' },
+                    }
                 };    
                 self.traces.push(trace);
             });
-            console.log(self.traces)
+
             var config = {responsive: true};
             Plotly.newPlot(self.graphDiv, self.traces, null, config);
         } else {
@@ -96,7 +105,6 @@ class Boxplot{
         }
 
         self.graphDiv.on('plotly_selected', function(eventData) {
-            console.log(eventData);
             if(!eventData) {eventData = {}; eventData.points = []}
             selectedPointsDataset.length = 0; //empty the array
             
@@ -117,7 +125,17 @@ class Boxplot{
         self.dataGrouped = d3.nest()
             .key(function(d) { return d[self.groupSubKey]; })
             .key(function(d) { return d[self.groupKey]; })
-            .rollup(function(v) { return v.map( k=> k[self.valueKey]); })
+            .rollup(function(v) { 
+                let key = v[0][self.groupSubKey];
+                if(!self.indexToRealIndexGrouped[key]) self.indexToRealIndexGrouped[key] = []; 
+                if(!self.realIndexToIndexGrouped[key]) self.realIndexToIndexGrouped[key] = {};
+                return v.map( (k, i)=> {
+                    let realIndex = self.data.findIndex( (r) => r===k );
+                    self.indexToRealIndexGrouped[key].push(realIndex);
+                    self.realIndexToIndexGrouped[key][realIndex] = self.indexToRealIndexGrouped[key].length-1;
+                    return  k[self.valueKey]; 
+                });
+            })
             .entries(self.data);
         
         self.tracesGrouped = [];
@@ -131,9 +149,12 @@ class Boxplot{
                 showlegend: true,
                 type: 'box',
                 name: el['key'],
+                marker: {
+                    color: self.boxPlotColors[index]
+                },
                 selected: {
                     marker: {
-                      color: 'red',
+                      color: '#941a20',
                       opacity: 1
                     }
                 },
@@ -145,7 +166,7 @@ class Boxplot{
             };
             el.values.forEach( v => {
                 x.push(...new Array(v['value'].length).fill(v['key']));
-                trace.y.push(...v['value'])
+                trace.y.push(...v['value']);
             });
             self.tracesGrouped.push(trace);
         });
@@ -155,9 +176,19 @@ class Boxplot{
             },
             boxmode: 'group'
           };
-        console.log(self.tracesGrouped);
         var config = {responsive: true};
         Plotly.newPlot(self.graphDivGrouped, self.tracesGrouped, layout, config);
+
+        self.graphDivGrouped.on('plotly_selected', function(eventData) {
+            if(!eventData) {eventData = {}; eventData.points = []}
+            selectedPointsDataset.length = 0; //empty the array
+            
+            eventData.points.forEach(function(pt) {
+                let k = pt.data.name;
+                selectedPointsDataset.push(self.indexToRealIndexGrouped[k][pt.pointIndex]);
+            });
+            updateCharts();
+        });
     }
 
     takeSelectedPoints(){
@@ -166,18 +197,29 @@ class Boxplot{
 
     update(){
         var selectedPoints = {};
-        
+        var selectedPointsGrouped = {};
+
         selectedPointsDataset.forEach( pt => {
-            let k = this.data[pt][this.groupKey];
-            if(!selectedPoints[k]) { selectedPoints[k] = []; }
-            selectedPoints[k].push(this.realIndexToIndex[k][pt])
+            let key
+            if(this.data[pt]){
+                key = this.data[pt][this.groupKey]
+            } else return;
+            let keyGrouped = this.data[pt][this.groupSubKey];
+            if(!selectedPoints[key]) { selectedPoints[key] = []; }
+            selectedPoints[key].push(this.realIndexToIndex[key][pt]);
+            if(!selectedPointsGrouped[keyGrouped]) { selectedPointsGrouped[keyGrouped] = []; }
+            selectedPointsGrouped[keyGrouped].push(this.realIndexToIndexGrouped[keyGrouped][pt]);
         });
 
         this.traces.forEach( trace => {
             trace.selectedpoints = selectedPoints[trace.name] || [];
         });
+
+        this.tracesGrouped.forEach( trace => {
+            trace.selectedpoints = selectedPointsGrouped[trace.name] || [];
+        });
         
         Plotly.react(this.graphDiv, this.traces);
-        //Plotly.restyle(this.graphDivGrouped, {selectedpoints: [selectedPoints]}, [0]);
+        Plotly.react(this.graphDivGrouped, this.tracesGrouped, {boxmode: 'group'});
     }
 }

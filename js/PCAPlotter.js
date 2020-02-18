@@ -65,7 +65,12 @@ class PCAPlotter {
                 x: data.adjustedData[0],
                 y: data.adjustedData[1],
                 mode: 'markers',
-                type: 'scatter'
+                type: 'scatter',
+                unselected: {
+                    marker: {
+                      opacity: 1
+                    }
+                }
             };
 
             var dataToPlot = [trace1];
