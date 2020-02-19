@@ -13,7 +13,7 @@ class Violinplot{
         '#2ca02c',  //cooked asparagus green
         '#17becf',  //light blue
         '#9467bd'   //muted purple
-    ]
+    ];
     constructor(data, valueKey, boxTitle, multiple, groupKey){
         this.data = data; //[{nameKey: 'we', data:[]}]
         this.boxTitle = boxTitle;
@@ -26,6 +26,32 @@ class Violinplot{
         const self = this;
 
         var traces = [];
+
+        var layout = {
+            yaxis: {
+                title: {
+                    text: 'Price ($)',
+                    font: {
+                        family: 'Courier New, monospace',
+                        size: 18,
+                        color: '#7f7f7f'
+                    }
+                }
+            },
+            xaxis: {
+                title: {
+                    text: 'Neighbourhood group',
+                    standoff: 5,
+                    font: {
+                        family: 'Courier New, monospace',
+                        size: 18,
+                        color: '#7f7f7f'
+                    }
+                }
+            }
+        };
+
+        var config = {responsive: true};
 
         if(self.multiple){
             self.dataGrouped = d3.nest()
@@ -49,8 +75,7 @@ class Violinplot{
                 };    
                 traces.push(trace);
             });
-            var config = {responsive: true};
-            Plotly.newPlot(domElement, traces, null, config);
+            Plotly.newPlot(domElement, traces, layout, config);
         } else {
             const self = this;
             var trace = {
@@ -59,8 +84,7 @@ class Violinplot{
                 name: self.data['key']
             };
             traces.push(trace);
-            var config = {responsive: true};
-            Plotly.newPlot(domElement, traces, null, config);
+            Plotly.newPlot(domElement, traces, layout, config);
         }
  
     }
@@ -101,6 +125,17 @@ class Violinplot{
             yaxis: {
                 title: {
                     text: 'Price ($)',
+                    font: {
+                        family: 'Courier New, monospace',
+                        size: 18,
+                        color: '#7f7f7f'
+                    }
+                }
+            },
+            xaxis: {
+                title: {
+                    text: 'Neighbourhood group',
+                    standoff: 5,
                     font: {
                         family: 'Courier New, monospace',
                         size: 18,
