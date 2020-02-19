@@ -69,9 +69,21 @@ class PCAPlotter {
             }
         };
 
+        var layout = {
+            title: {
+                text:'Scatterplot of PCA',
+                font: {
+                    family: 'Courier New, monospace',
+                    size: 24
+                },
+                xref: 'paper',
+                x: 0.05,
+            }
+        };
+
         var dataToPlot = [trace1];
 
-        Plotly.newPlot(this.PCADiv, dataToPlot, null, config);
+        Plotly.newPlot(this.PCADiv, dataToPlot, layout, config);
 
         this.PCADiv.on('plotly_selected', (eventData) => {
             if(!eventData) {eventData = {}; eventData.points = []}

@@ -13,8 +13,35 @@ class BarchartSelect{
     };
 
     layout = {
+        title: {
+            text:'Average price by neighbourhood',
+            font: {
+                family: 'Courier New, monospace',
+                size: 24
+            },
+            xref: 'paper',
+            x: 0.05,
+        },
         yaxis: {
-          tickangle: -30
+            tickangle: -30,
+            title: {
+                text: 'Neighbourhood',
+                font: {
+                    family: 'Courier New, monospace',
+                    size: 18,
+                    color: '#7f7f7f'
+                }
+            }
+        },
+        xaxis: {
+            title: {
+                text: 'Price ($)',
+                font: {
+                    family: 'Courier New, monospace',
+                    size: 18,
+                    color: '#7f7f7f'
+                }
+            }
         },
         margin: this.margin
     };

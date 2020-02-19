@@ -39,7 +39,28 @@ class StackedBarchart{
         });
         console.log(traces);
       
-        var layout = {barmode: 'stack'};
+        var layout = {
+            title: {
+                text:'Amount of announcements per room type',
+                font: {
+                    family: 'Courier New, monospace',
+                    size: 24
+                },
+                xref: 'paper',
+                x: 0.05,
+            },
+            xaxis: {
+                title: {
+                    text: 'Neighbourhood group',
+                    font: {
+                        family: 'Courier New, monospace',
+                        size: 18,
+                        color: '#7f7f7f'
+                    }
+                }
+            },
+            barmode: 'stack',
+        };
         var config = {responsive: true};
         Plotly.newPlot(domElement, traces, layout, config);
     }

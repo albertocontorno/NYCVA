@@ -99,8 +99,14 @@ class Violinplot{
         });
         var layout = {
             yaxis: {
-              //title: 'normalized moisture',
-              zeroline: true
+                title: {
+                    text: 'Price ($)',
+                    font: {
+                        family: 'Courier New, monospace',
+                        size: 18,
+                        color: '#7f7f7f'
+                    }
+                }
             },
             boxmode: 'group',
             violinmode: 'group'
