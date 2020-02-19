@@ -37,6 +37,8 @@ Promise.all([d3.csv("./assets/NYC_AirBnB_announcements_10k.csv"), d3.csv("./asse
     plotViolinplot(dataset);
     plotStackedplot(dataset);
     initAndPlotPCA(values[1]);
+
+    document.getElementById("violin_row").style.display = "none"; //Non levarlo, se lo metti nell'html bugga
 });
 
 function plotPricePerHoodChart(data) {
@@ -136,4 +138,14 @@ function updateCharts(source = 'none'){
     if(source != constants.PRICE_PER_MICRO_HOOD_BARCHART){
         pricePerHoodSelectBarchart.deselect();
     }
+}
+
+function switchToViolinPlot() {
+    document.getElementById("box_row").style.display = "none";
+    document.getElementById("violin_row").style.display = "block";
+}
+
+function switchToBoxPlot() {
+    document.getElementById("box_row").style.display = "block";
+    document.getElementById("violin_row").style.display = "none";
 }
