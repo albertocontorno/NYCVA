@@ -8,7 +8,7 @@ class BarchartSelect{
         l: 120,
         r: 40,
         b: 35,
-        t: 15,
+        t: 35,
         pad: 4
     };
 
@@ -23,7 +23,7 @@ class BarchartSelect{
             x: 0.05,
         },
         yaxis: {
-            tickangle: -30,
+            tickangle: 0,
             title: {
                 text: 'Neighbourhood',
                 font: {
@@ -35,7 +35,7 @@ class BarchartSelect{
         },
         xaxis: {
             title: {
-                text: 'Price ($)',
+                text: 'Avg. Price ($)',
                 font: {
                     family: 'Courier New, monospace',
                     size: 18,
@@ -43,7 +43,8 @@ class BarchartSelect{
                 }
             }
         },
-        margin: this.margin
+        margin: this.margin,
+        height: '500'
     };
     dataByHoodFiltered = [];
 
@@ -123,13 +124,10 @@ class BarchartSelect{
                       x: self.dataByHoodFiltered.map( v => v.value.price ),
                       y: self.dataByHoodFiltered.map( v => v.key ),
                       text: self.dataByHoodFiltered.map( v => parseFloat(v.value.price).toFixed(2) + ' $' ),
-                      hoverinfo: 'none',
                       textposition: 'outside',
                       orientation: 'h',
                       type: 'bar',
-                      marker: {
-                        size: 0.2,
-                      }
+                      hovertemplate: "<b>Neighbourhood</b>: %{y}<br><b>Avg. Price</b>: %{text}"
                     }
                 ];
     
