@@ -21,7 +21,7 @@ const constants = {
     BOXPLOT_PRICE_DISTRIBUTIONS: 'BOXPLOT_PRICE_DISTRIBUTIONS'
 };
 
-Promise.all([d3.csv("./assets/NYC_AirBnB_announcements_short.csv"), d3.csv("./assets/NYC_AirBnB_announcements_short_PCA.csv")]).then( values => {
+Promise.all([d3.csv("./assets/NYC_AirBnB_announcements_10k.csv"), d3.csv("./assets/xy.csv")]).then( values => {
 
     var data = values[0];
     dataset = data.filter(d => d.price < 500);  //Remove outliers
@@ -102,8 +102,8 @@ function plotWordCloud(data){
 }
 
 function initAndPlotPCA(pcaData){
-    pcaDataset = pcaData.filter(d => d.price < 500); //Remove outliers
-    pca = new PCAPlotter(pcaDataset);
+    //pcaDataset = pcaData.filter(d => d.price < 500); //Remove outliers
+    pca = new PCAPlotter(pcaData);
     pca.initPlotter();
 }
 
