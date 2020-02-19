@@ -40,54 +40,9 @@ Promise.all([d3.csv("./assets/NYC_AirBnB_announcements_10k.csv"), d3.csv("./asse
 });
 
 function plotPricePerHoodChart(data) {
-
-    const dataByHood = d3.nest()
-        .key(function(d) { return d["neighbourhood_group"]; })
-        .rollup(function(v) { return d3.mean(v, (el) => el["price"]) })
-        .entries(data);
-
-    dataByHood.sort( (a,b)=> b["value"] - a["value"]);
-
-    createPricePerHoodChart(barChartSvg, dataByHood, data);
-
-    window.onresize = createPricePerHoodChart.bind(null, barChartSvg, dataByHood);
+    pricePerHoodBarchart = new Barchart(constants.PRICE_PER_HOOD_BARCHART, data);
+    pricePerHoodBarchart.draw('barchart_hood_group');
 }
-
-function createPricePerHoodChart(el, dataByHood, data){
-    let g = el;
-    let width = +document.querySelector("#barchart_avgPrizePerZone").clientWidth - barChart_margin.left - barChart_margin.right;
-    let height = +document.querySelector("#barchart_avgPrizePerZone").clientHeight - barChart_margin.top - barChart_margin.bottom;
-
-    // Create scale
-    const x_scale = d3.scaleLinear()
-                  .domain([0, d3.max(dataByHood, (d)=>d["value"])])
-                  .range([0, width]);
-
-    // Add scales to axis
-    const x_axis = d3.axisBottom().scale(x_scale);
-    
-    const y_scale = d3.scaleBand()
-        .domain(dataByHood.map( el => el["key"]))
-        .rangeRound([0, height]).paddingOuter(0.1).paddingInner(0.2);
-
-
-    const y_axis = d3.axisLeft(y_scale);
-    let barChart = new Barchart(constants.PRICE_PER_HOOD_BARCHART, dataByHood, width, height, x_axis, y_axis, x_scale, y_scale);
-    pricePerHoodBarchart = barChart;
-    barChart.dataValueAccessorFn = d => d["value"];
-    barChart.dataLabelAccessorFn = d => d["value"];
-    barChart.labelFn = d => "$" + Math.fround( d["value"]).toFixed(2);
-    barChart.enableSelectionFn = (data_) => {
-        var selection = data_.filter( v => v.selected ).map( v => v.key);
-        selectedPointsDataset.length = 0; //empty the array
-        dataset.forEach( (v,i) => {
-            if(selection.includes(v.neighbourhood_group)){ selectedPointsDataset.push(i); }
-        });
-        updateCharts(barChart.id);
-    };
-    barChart.draw(g);
-}
-
 
 function unpack(rows, key) {
     return rows.map(function(row) {

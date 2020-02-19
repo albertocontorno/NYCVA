@@ -7,9 +7,8 @@ class BarchartSelect{
     margin = {
         l: 120,
         r: 40,
-        b: 35,
-        t: 35,
-        pad: 4
+        b: 40,
+        t: 35
     };
 
     layout = {
@@ -127,6 +126,7 @@ class BarchartSelect{
                       textposition: 'outside',
                       orientation: 'h',
                       type: 'bar',
+                      hoverlabel: {namelength: 0},
                       hovertemplate: "<b>Neighbourhood</b>: %{y}<br><b>Avg. Price</b>: %{text}"
                     }
                 ];
@@ -143,7 +143,6 @@ class BarchartSelect{
     
             self.graphDiv.on('plotly_selected', function(eventData) {
                 if(!eventData) {eventData = {}; eventData.points = []}
-                console.log(eventData.points);
                 selectedPointsDataset.length = 0; //empty the array
                 eventData.points.forEach( hood => {
                     let hoodName = hood.y;
