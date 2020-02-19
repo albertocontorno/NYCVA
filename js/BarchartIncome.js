@@ -1,4 +1,4 @@
-class Barchart {
+class BarchartIncome {
     id;
     dataset = [];
     dataByHood = [];
@@ -25,7 +25,7 @@ class Barchart {
         },
         xaxis: {
             title: {
-                text: 'Avg. Price ($)',
+                text: 'Avg. monthly income ($)',
                 font: {
                     family: 'Courier New, monospace',
                     size: 18,
@@ -47,12 +47,12 @@ class Barchart {
 
         self.dataByHood = d3.nest()
             .key(function(d) { return d["neighbourhood_group"]; })
-            .rollup(function(v) { return d3.mean(v, (el) => el["price"]) })
+            .rollup(function(v) { return d3.mean(v, (el) => el["monthlyincome"]) })
             .entries(self.dataset);
 
         self.dataByHood.sort( (a,b)=> b["value"] - a["value"]);
 
-        self.graphDiv = document.getElementById('barchart_hood_group');
+        self.graphDiv = document.getElementById('barchart_income_hood_group');
 
         var plotData = [
             {
@@ -64,7 +64,7 @@ class Barchart {
                 orientation: 'h',
                 type: 'bar',
                 hoverlabel: {namelength: 0},
-                hovertemplate: "<b>Neighbourhood</b>: %{y}<br><b>Avg. Price</b>: %{text}",
+                hovertemplate: "<b>Neighbourhood</b>: %{y}<br><b>Avg. monthly income</b>: %{text}",
                 selected: {
                     marker: {
                       color: '#941a20',
