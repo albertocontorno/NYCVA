@@ -40,21 +40,24 @@ class StackedBarchart{
         console.log(traces);
       
         var layout = {
-            title: {
-                text:'Amount of announcements per room type',
-                font: {
-                    family: 'Courier New, monospace',
-                    size: 24
-                },
-                xref: 'paper',
-                x: 0.05,
-            },
             xaxis: {
                 title: {
                     text: 'Neighbourhood group',
+                    standoff: 5,
                     font: {
                         family: 'Courier New, monospace',
-                        size: 18,
+                        size: 16,
+                        color: '#7f7f7f'
+                    }
+                }
+            },
+            yaxis: {
+                title: {
+                    text: 'n° of announcements',
+                    standoff: 15,
+                    font: {
+                        family: 'Courier New, monospace',
+                        size: 16,
                         color: '#7f7f7f'
                     }
                 }

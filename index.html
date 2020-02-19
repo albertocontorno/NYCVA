@@ -27,7 +27,9 @@
         <style>
             .chart_label{
                 text-align: center;
-                font-weight: bold
+                font-weight: bold;
+                font-size: 24px;
+                margin-top: 25px;
             }
 
             .chart_container {
@@ -126,12 +128,14 @@
                 <div class="chart_label"><button id="map_btn">Show encoding by monthly income</button>Scatter plot of houses using latitude and longitude</div>
             </div>
             <div class="col-xs chart_container">
+                <div class="chart_label">Scatterplot of PCA</div>
                 <div id="scatter_pca_container" style="height: 750px"></div>
             </div>
         </div>
 
         <div class="row">
             <div class="col-xs chart_container">
+                <div class="chart_label">Amount of announcements per room type</div>
                 <div id="room_types"></div>
             </div>
             <div class="col-xs chart_container">
