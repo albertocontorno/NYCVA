@@ -72,10 +72,10 @@ function plotBoxplot(data){
         document.getElementById('boxplot').classList.toggle('hide');
         document.getElementById('boxplot_grouped').classList.toggle('hide');
         if(document.getElementById('boxplot').classList.contains('hide')){
-            document.getElementById('boxplot_btn').innerText = 'Grouped by neighbourhood';
+            document.getElementById('boxplot_btn').innerText = 'Group by neighbourhood';
             Plotly.Plots.resize(d3.select('#boxplot_grouped').node());
         } else {
-            document.getElementById('boxplot_btn').innerText = 'Grouped by room type';
+            document.getElementById('boxplot_btn').innerText = 'Group by room type';
             Plotly.Plots.resize(d3.select('#boxplot').node());
         }
     };
@@ -91,10 +91,10 @@ function plotViolinplot(data){
         document.getElementById('violionplot').classList.toggle('hide');
         document.getElementById('violionplot_grouped').classList.toggle('hide');
         if(document.getElementById('violionplot').classList.contains('hide')){
-            document.getElementById('violionplot_btn').innerText = 'Grouped by neighbourhood';
+            document.getElementById('violionplot_btn').innerText = 'Group by neighbourhood';
             Plotly.Plots.resize(d3.select('#violionplot_grouped').node());
         } else {
-            document.getElementById('violionplot_btn').innerText = 'Grouped by room type';
+            document.getElementById('violionplot_btn').innerText = 'Group by room type';
             Plotly.Plots.resize(d3.select('#violionplot').node());
         }
     };

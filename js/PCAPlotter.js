@@ -60,6 +60,7 @@ class PCAPlotter {
         var trace1 = {
             x: data[0],
             y: data[1],
+            hoverinfo: 'skip',
             mode: 'markers',
             type: 'scatter',
             unselected: {
@@ -69,21 +70,9 @@ class PCAPlotter {
             }
         };
 
-        var layout = {
-            title: {
-                text:'Scatterplot of PCA',
-                font: {
-                    family: 'Courier New, monospace',
-                    size: 24
-                },
-                xref: 'paper',
-                x: 0.05,
-            }
-        };
-
         var dataToPlot = [trace1];
 
-        Plotly.newPlot(this.PCADiv, dataToPlot, layout, config);
+        Plotly.newPlot(this.PCADiv, dataToPlot, null, config);
 
         this.PCADiv.on('plotly_selected', (eventData) => {
             if(!eventData) {eventData = {}; eventData.points = []}

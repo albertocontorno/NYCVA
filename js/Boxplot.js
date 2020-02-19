@@ -22,7 +22,7 @@ class Boxplot{
         '#2ca02c',  //cooked asparagus green
         '#17becf',  //light blue
         '#9467bd'   //muted purple
-    ]
+    ];
     constructor(id, data, valueKey, boxTitle, multiple, groupKey){
         this.id = id;
         this.data = data; //[{nameKey: 'we', data:[]}]
@@ -37,6 +37,32 @@ class Boxplot{
 
         self.graphDiv = document.getElementById(domElement);
         self.traces = [];
+
+        var layout = {
+            yaxis: {
+                title: {
+                    text: 'Price ($)',
+                    font: {
+                        family: 'Courier New, monospace',
+                        size: 18,
+                        color: '#7f7f7f'
+                    }
+                }
+            },
+            xaxis: {
+                title: {
+                    text: 'Neighbourhood group',
+                    standoff: 5,
+                    font: {
+                        family: 'Courier New, monospace',
+                        size: 18,
+                        color: '#7f7f7f'
+                    }
+                }
+            }
+        };
+
+        var config = {responsive: true};
 
         if(self.multiple){
             self.dataGrouped = d3.nest()
@@ -79,8 +105,7 @@ class Boxplot{
                 self.traces.push(trace);
             });
 
-            var config = {responsive: true};
-            Plotly.newPlot(self.graphDiv, self.traces, null, config);
+            Plotly.newPlot(self.graphDiv, self.traces, layout, config);
         } else {
             const self = this;
             var trace = {
@@ -100,8 +125,7 @@ class Boxplot{
                 }
             };
             self.traces.push(trace);
-            var config = {responsive: true};
-            Plotly.newPlot(self.graphDiv, self.traces, null, config);
+            Plotly.newPlot(self.graphDiv, self.traces, layout, config);
         }
 
         self.graphDiv.on('plotly_selected', function(eventData) {
@@ -172,7 +196,25 @@ class Boxplot{
         });
         var layout = {
             yaxis: {
-              zeroline: true
+                title: {
+                    text: 'Price ($)',
+                    font: {
+                        family: 'Courier New, monospace',
+                        size: 18,
+                        color: '#7f7f7f'
+                    }
+                }
+            },
+            xaxis: {
+                title: {
+                    text: 'Neighbourhood group',
+                    standoff: 5,
+                    font: {
+                        family: 'Courier New, monospace',
+                        size: 18,
+                        color: '#7f7f7f'
+                    }
+                }
             },
             boxmode: 'group'
           };
@@ -200,7 +242,7 @@ class Boxplot{
         var selectedPointsGrouped = {};
 
         selectedPointsDataset.forEach( pt => {
-            let key
+            let key;
             if(this.data[pt]){
                 key = this.data[pt][this.groupKey]
             } else return;
