@@ -7,6 +7,7 @@
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flexboxgrid/6.3.1/flexboxgrid.min.css" type="text/css" >
         <script src="https://unpkg.com/jeezy@1.12.11/lib/jeezy.min.js"></script>
         <script src="js/Barchart.js"></script>
+        <script src="js/BarchartIncome.js"></script>
         <script src="js/BarchartSelect.js"></script>
         <script src="js/MapChart.js"></script>
         <script src="js/WordCloud.js"></script>
@@ -87,8 +88,8 @@
 
     <body>
 
-        <div class="row">
-            <div class="col-xs chart_container" id="price_hood_container" style="height: 750px">
+        <div class="row" style="height: 750px">
+            <div class="col-xs chart_container" id="price_hood_container">
                 <p id="price_hood_select">
                     <label for="hoods_select" style="margin-top: 13px; display: inline-block;">Select neighbourhoods:</label>
                     <button id="price_hood_top5" class="tab_btn" style="float: right">Select top 5</button>
@@ -103,8 +104,19 @@
                     <div id="price_hood_selected"></div>
                 </div>
             </div>
-            <div class="col-xs chart_container">
-                <div id="barchart_hood_group"></div>
+            <div class="col-xs">
+                <div class="row">
+                    <div class="col-xs chart_container">
+                        <div class="chart_label">Average price by neighbourhood group</div>
+                        <div id="barchart_hood_group"></div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs chart_container">
+                        <div class="chart_label">Average monthly income by neighbourhood group</div>
+                        <div id="barchart_income_hood_group"></div>
+                    </div>
+                </div>
             </div>
         </div>
 

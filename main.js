@@ -1,10 +1,4 @@
 
-barChart_margin = {top: 20, right: 20, bottom: 30, left: 80};
-const barChartSvg = d3.select("#barchart_avgPrizePerZone").append("g").attr("transform", "translate(" + barChart_margin.left + "," + barChart_margin.top + ")");
-
-scatterPlot_margin = {top: 10, right: 30, bottom: 30, left: 60};
-const scatterPlotSvg = d3.select("#location_scatter_plot").append("g").attr("transform", "translate(" + scatterPlot_margin.left + "," + scatterPlot_margin.top + ")");
-
 var dataset;
 var pcaDataset;
 
@@ -13,10 +7,11 @@ var chartsToUpdate = [];
 var selectedPointsPca = [];
 
 var pca;
-var pricePerHoodBarchart, pricePerHoodSelectBarchart, boxplot;
+var pricePerHoodBarchart, incomePerHoodBarchart, pricePerHoodSelectBarchart, boxplot;
 
 const constants = {
     PRICE_PER_HOOD_BARCHART: 'PRICE_PER_HOOD_BARCHART',
+    INCOME_PER_HOOD_BARCHART: 'INCOME_PER_HOOD_BARCHART',
     PRICE_PER_MICRO_HOOD_BARCHART: 'PRICE_PER_MICRO_HOOD_BARCHART',
     BOXPLOT_PRICE_DISTRIBUTIONS: 'BOXPLOT_PRICE_DISTRIBUTIONS'
 };
@@ -30,6 +25,7 @@ Promise.all([d3.csv("./assets/NYC_AirBnB_announcements_10k.csv"), d3.csv("./asse
     console.log(dataset[0]);
 
     plotPricePerHoodChart(dataset);
+    plotIncomePerHoodChart(dataset);
     drawMap(dataset);
     createSearchSelectHoods(dataset);
     plotWordCloud(dataset);
@@ -41,17 +37,22 @@ Promise.all([d3.csv("./assets/NYC_AirBnB_announcements_10k.csv"), d3.csv("./asse
     document.getElementById("violin_row").style.display = "none"; //Non levarlo, se lo metti nell'html bugga
 });
 
-function plotPricePerHoodChart(data) {
-    pricePerHoodBarchart = new Barchart(constants.PRICE_PER_HOOD_BARCHART, data);
-    pricePerHoodBarchart.draw('barchart_hood_group');
-}
-
 function unpack(rows, key) {
     return rows.map(function(row) {
         return row[key];
     });
 }
 
+
+function plotPricePerHoodChart(data) {
+    pricePerHoodBarchart = new Barchart(constants.PRICE_PER_HOOD_BARCHART, data);
+    pricePerHoodBarchart.draw('barchart_hood_group');
+}
+
+function plotIncomePerHoodChart(data) {
+    incomePerHoodBarchart = new BarchartIncome(constants.INCOME_PER_HOOD_BARCHART, data);
+    incomePerHoodBarchart.draw('barchart_income_hood_group');
+}
 
 function plotWordCloud(data){
     const wordCloud = new WordCloud(data);
@@ -111,7 +112,7 @@ function evaluateEstMonthlyIncome(pcaDataset) {
     pcaDataset.forEach(getHouseMonthlyIncome);
 
     function getHouseMonthlyIncome(item, index) {
-        pcaDataset[index].monthlyincome = (item.price * (365 - item.availability_365))/12;
+        pcaDataset[index].monthlyincome = ((item.price * (365 - item.availability_365))/12).toFixed(2);
     }
 }
 
@@ -134,6 +135,9 @@ function updateCharts(source = 'none'){
     pca.update();
     if(source != constants.PRICE_PER_HOOD_BARCHART){
         pricePerHoodBarchart.deselect();
+    }
+    if(source != constants.INCOME_PER_HOOD_BARCHART){
+        incomePerHoodBarchart.deselect();
     }
     if(source != constants.PRICE_PER_MICRO_HOOD_BARCHART){
         pricePerHoodSelectBarchart.deselect();
