@@ -105,6 +105,9 @@ class MapChart{
                             ticksuffix: ' $',
                             ticks: 'outside',
                             ticklen: 5,
+                            title:{
+                                text: 'Income($)'
+                            }
                         }
                     },
                     hoverlabel: {namelength: 0},
@@ -134,6 +137,9 @@ class MapChart{
                             ticksuffix: ' $',
                             ticks: 'outside',
                             ticklen: 5,
+                            title:{
+                                text: 'Price($)'
+                            }
                         }
                     },
                     hoverlabel: {namelength: 0},

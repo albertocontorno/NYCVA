@@ -37,7 +37,7 @@ Promise.all([d3.csv("./assets/NYC_AirBnB_announcements_10k.csv"), d3.csv("./asse
     plotViolinplot(dataset);
     plotStackedplot(dataset);
     initAndPlotPCA(values[1]);
-
+    computeCorrelation(dataset);
     document.getElementById("violin_row").style.display = "none"; //Non levarlo, se lo metti nell'html bugga
 });
 
@@ -148,4 +148,11 @@ function switchToViolinPlot() {
 function switchToBoxPlot() {
     document.getElementById("box_row").style.display = "block";
     document.getElementById("violin_row").style.display = "none";
+}
+
+function computeCorrelation(dataset){
+    const cols = ['latitude', 'longitude', 'price', 'minimum_nights', 'number_of_reviews', 'reviews_per_month', 'calculated_host_listings_count', 'availability_365', 'monthlyincome'];
+    const colNames = ['Latitude', 'Longitude', 'Price', 'Min. Nights', 'Num. of Reviews', 'Reviews Per Month', 'Host Listings Count', 'Availability', 'Monthly Income'];
+    const correlationMatrix = new CorrelationMatrix(dataset, cols, colNames);
+    correlationMatrix.draw('correlation_matrix');
 }
