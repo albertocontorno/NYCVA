@@ -117,11 +117,12 @@ class BarchartSelect{
     
                 var selectedHoods = select.select2('data').map( v => v.id );
                 self.dataByHoodFiltered = dataByHood.filter( v => selectedHoods.includes(v.key));
-    
+                let w = self.dataByHoodFiltered.length > 10 ? 0.9 : 0.5;
                 var plotData = [
                     {
                       x: self.dataByHoodFiltered.map( v => v.value.price ),
                       y: self.dataByHoodFiltered.map( v => v.key ),
+                      width: w,
                       text: self.dataByHoodFiltered.map( v => parseFloat(v.value.price).toFixed(2) + ' $' ),
                       textposition: 'outside',
                       orientation: 'h',

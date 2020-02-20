@@ -27,7 +27,8 @@ class StackedBarchart{
                 x: [], //una per ogni hood
                 y: [],
                 name: hood['key'],
-                type: 'bar'
+                type: 'bar',
+                width: 0.65
             };
 
             traces.push(trace);
