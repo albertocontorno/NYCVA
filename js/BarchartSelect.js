@@ -8,19 +8,10 @@ class BarchartSelect{
         l: 120,
         r: 40,
         b: 40,
-        t: 35
+        t: 0
     };
 
     layout = {
-        title: {
-            text:'Average price by neighbourhood',
-            font: {
-                family: 'Courier New, monospace',
-                size: 24
-            },
-            xref: 'paper',
-            x: 0.05,
-        },
         yaxis: {
             tickangle: 0,
             title: {

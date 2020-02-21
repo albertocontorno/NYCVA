@@ -43,7 +43,7 @@ class WordCloud{
         var margin = {top: 10, right: 10, bottom: 10, left: 10},
             width = +document.querySelector("#word_cloud").clientWidth - margin.left - margin.right,
             height = +document.querySelector("#word_cloud").clientHeight - margin.top - margin.bottom;
-
+            d3.select("#word_cloud").attr('viewBox', `0 0 ${width} ${height}`);
         // append the svg object to the body of the page
         var svg = d3.select("#word_cloud").append("svg")
             .attr("width", width + margin.left + margin.right)

@@ -59,6 +59,9 @@ class Boxplot{
                         color: '#7f7f7f'
                     }
                 }
+            },
+            margin:{
+                t:0
             }
         };
 

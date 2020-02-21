@@ -98,8 +98,9 @@
 
     <body>
 
-        <div class="row" style="height: 750px">
-            <div class="col-xs chart_container" id="price_hood_container">
+        <div class="row chart_container">
+            <div class="col-xs-12 col-md-6 chart_container" id="price_hood_container">
+                <div class="chart_label">Average price by neighbourhood</div>
                 <p id="price_hood_select">
                     <label for="hoods_select" style="margin-top: 13px; display: inline-block;">Select neighbourhoods:</label>
                     <button id="price_hood_top5" class="tab_btn" style="float: right">Select top 5</button>
@@ -114,7 +115,7 @@
                     <div id="price_hood_selected"></div>
                 </div>
             </div>
-            <div class="col-xs">
+            <div class="col-xs-12 col-md-6" >
                 <div class="row">
                     <div class="col-xs chart_container">
                         <div class="chart_label">Average price by neighbourhood group</div>
@@ -122,7 +123,7 @@
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-xs chart_container">
+                    <div class="col-xs ">
                         <div class="chart_label">Average monthly income by neighbourhood group</div>
                         <div id="barchart_income_hood_group"></div>
                     </div>
@@ -131,7 +132,7 @@
         </div>
 
         <div class="row" id="violin_row">
-            <div class="col-xs chart_container">
+            <div class="col-xs-12 col-md-6 chart_container">
                 <div class="chart_label">Prices' distributions with violin-plot</div>
                 <div style="text-align: center; margin: 5px auto;">
                     <button id="violionplot_btn">Group by room type</button>
@@ -154,23 +155,23 @@
         </div>
 
         <div class="row">
-            <div class="col-xs chart_container">
+            <div class="col-xs-12 col-md-6 chart_container">
                 <div class="chart_label">Scatter plot of houses using latitude and longitude</div>
                 <button id="map_btn" style="margin:5px auto; display:block;">Show encoding by monthly income</button>
                 <div id="scatter_map_container" style="height: 750px"></div>
             </div>
-            <div class="col-xs chart_container">
+            <div class="col-xs-12 col-md-6 chart_container">
                 <div class="chart_label">Scatterplot of PCA</div>
                 <div id="scatter_pca_container" style="height: 750px"></div>
             </div>
         </div>
 
         <div class="row">
-            <div class="col-xs chart_container">
+            <div class="col-xs-12 col-md-6 chart_container">
                 <div class="chart_label">Amount of announcements per room type</div>
                 <div id="room_types"></div>
             </div>
-            <div class="col-xs chart_container">
+            <div class="col-xs-12 col-md-6 chart_container">
                 <div class="chart_label">Correlation Matrix</div>
                 <div id="correlation_matrix"></div>
             </div>

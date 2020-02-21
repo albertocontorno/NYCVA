@@ -8,7 +8,8 @@ class BarchartIncome {
     margin = {
         l: 120,
         r: 20,
-        b: 40
+        b: 40,
+        t:0
     };
 
     layout = {
@@ -34,7 +35,7 @@ class BarchartIncome {
             }
         },
         margin: this.margin,
-        height: 318
+        height: 268
     };
     
     constructor(id, data){
