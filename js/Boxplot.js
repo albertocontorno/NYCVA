@@ -23,6 +23,8 @@ class Boxplot{
         '#17becf',  //light blue
         '#9467bd'   //muted purple
     ];
+    layout;
+    layoutGrouped;
     constructor(id, data, valueKey, boxTitle, multiple, groupKey){
         this.id = id;
         this.data = data; //[{nameKey: 'we', data:[]}]
@@ -38,7 +40,7 @@ class Boxplot{
         self.graphDiv = document.getElementById(domElement);
         self.traces = [];
 
-        var layout = {
+        self.layout = {
             yaxis: {
                 title: {
                     text: 'Price ($)',
@@ -108,7 +110,7 @@ class Boxplot{
                 self.traces.push(trace);
             });
 
-            Plotly.newPlot(self.graphDiv, self.traces, layout, config);
+            Plotly.newPlot(self.graphDiv, self.traces, self.layout, config);
         } else {
             const self = this;
             var trace = {
@@ -197,7 +199,7 @@ class Boxplot{
             });
             self.tracesGrouped.push(trace);
         });
-        var layout = {
+        self.layoutGrouped = {
             yaxis: {
                 title: {
                     text: 'Price ($)',
@@ -219,10 +221,13 @@ class Boxplot{
                     }
                 }
             },
-            boxmode: 'group'
+            boxmode: 'group',
+            margin:{
+                t:0
+            }
           };
         var config = {responsive: true};
-        Plotly.newPlot(self.graphDivGrouped, self.tracesGrouped, layout, config);
+        Plotly.newPlot(self.graphDivGrouped, self.tracesGrouped, self.layoutGrouped, config);
 
         self.graphDivGrouped.on('plotly_selected', function(eventData) {
             if(!eventData) {eventData = {}; eventData.points = []}
@@ -264,7 +269,7 @@ class Boxplot{
             trace.selectedpoints = selectedPointsGrouped[trace.name] || [];
         });
         
-        Plotly.react(this.graphDiv, this.traces);
-        Plotly.react(this.graphDivGrouped, this.tracesGrouped, {boxmode: 'group'});
+        Plotly.react(this.graphDiv, this.traces, this.layout);
+        Plotly.react(this.graphDivGrouped, this.tracesGrouped, this.layoutGrouped);
     }
 }

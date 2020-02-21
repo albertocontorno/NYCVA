@@ -147,7 +147,10 @@ class Violinplot{
                 }
             },
             boxmode: 'group',
-            violinmode: 'group'
+            violinmode: 'group',
+            margin:{
+                t:0
+            }
           };
         console.log(self.traces);
         var config = {responsive: true};
